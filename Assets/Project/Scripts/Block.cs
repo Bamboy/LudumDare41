@@ -33,7 +33,7 @@ public struct Block
 		Block square = new Block();
 		square.token = 1;
 		up = new BlockOrientation( 2, 2, new Vector2Int(0,0), true );
-		square.rotations = new List<BlockOrientation>(){ up };//Only one rotation for the square
+		square.rotations = new List<BlockOrientation>(){ up, up, up, up };//Only one rotation for the square
 		blocks.Add( square );
 
 

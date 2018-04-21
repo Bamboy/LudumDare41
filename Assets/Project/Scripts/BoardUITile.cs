@@ -38,7 +38,8 @@ public class BoardUITile : MonoBehaviour
 	}
 	public void Initalize(int x, int y, TetrisBlock owner)
 	{
-		Destroy( text.gameObject );
+		if( text != null )
+			Destroy( text.gameObject );
 
 		this.token = owner.template.token;
 		this.owner = owner;

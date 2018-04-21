@@ -4,8 +4,6 @@ using UnityEngine;
 
 public struct BlockOrientation
 {
-
-
 	/// Defines what tiles are solid in this block.
 	public bool[,] tiles;
 

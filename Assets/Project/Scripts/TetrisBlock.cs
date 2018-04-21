@@ -9,7 +9,17 @@ public class TetrisBlock : MonoBehaviour
 	private Block _template;
 	public Block template{ get{ return _template; } private set{ _template = value; } }
 
-	public int rotation;
+	private int _rotation;
+	public int rotation
+	{
+		get{ return _rotation; }
+		set
+		{
+			_rotation = (int)Mathf.Repeat((float)value, (float)template.rotations.Count);
+
+
+		}
+	}
 
 	public bool active{ get; private set; }
 
@@ -31,8 +41,10 @@ public class TetrisBlock : MonoBehaviour
 		this.template = template;
 		position = GameManager.singleton.board.blockSpawn;
 		this.rotation = rotation;
+		transform.rotation = Quaternion.identity;
 		tiles = new List<BoardUITile>();
 
+		rotation = 1;
 		GameObject prefab = GameManager.singleton.boardRendering.tilePrefab;
 		Vector2 offset = template.rotations[rotation].pivot;
 		for (int x = 0; x < template.rotations[rotation].tiles.GetLength(0); x++) 
@@ -44,17 +56,16 @@ public class TetrisBlock : MonoBehaviour
 
 				GameObject obj = Instantiate<GameObject>( prefab );
 
-
 				obj.transform.parent = this.transform;
-				obj.transform.localPosition = new Vector3( x - template.rotations[rotation].pivot.x, 
-					y - template.rotations[rotation].pivot.y - 1, 0f );
+				obj.transform.localPosition = new Vector3( 
+					x - template.rotations[rotation].pivot.x, 
+					y - template.rotations[rotation].pivot.y, 0f );
 				BoardUITile t = obj.GetComponent<BoardUITile>();
 				t.Initalize(x, y - 1, this);
 				//t.token = template.token;
 				tiles.Add( t );
 			}
 		}
-
 	}
 		
 	public void OnGameUpdate()
@@ -77,7 +88,7 @@ public class TetrisBlock : MonoBehaviour
 				Debug.Log("Placed tile " + tilePos);
 
 			}
-
+			
 			Destroy( tile.gameObject );
 		}
 		tiles = new List<BoardUITile>();
@@ -88,8 +99,33 @@ public class TetrisBlock : MonoBehaviour
 	/// Tries to rotate this block. Returns true if the rotation is possible.
 	public bool Rotate( bool clockwise )
 	{
-		rotation = clockwise ? rotation + 1 : rotation - 1; //TODO
-		return false;
+		//transform.Rotate( 0f, 0f, clockwise ? -90f : 90f );
+
+		int newRot = (int)Mathf.Repeat(rotation + (clockwise ? 1f : -1f), (float)template.rotations.Count);
+
+		//TODO check for colliding blocks here before actually rotating
+
+		int i = 0;
+		for (int x = 0; x < template.rotations[newRot].tiles.GetLength(0); x++) 
+		{
+			for (int y = 0; y < template.rotations[newRot].tiles.GetLength(1); y++) 
+			{
+				if( template.rotations[newRot].tiles[x,y] == false )
+					continue;
+
+				//Move each tile to its new rotated position. 
+				//This assumes that each rotation keeps the same number of tiles.
+				tiles[i].transform.localPosition = new Vector3( 
+					x - template.rotations[newRot].pivot.x, 
+					y - template.rotations[newRot].pivot.y, 0f );
+				
+				i++;
+			}
+		}
+
+		rotation = newRot;
+
+		return true;
 	}
 
 	#region input
@@ -102,6 +138,14 @@ public class TetrisBlock : MonoBehaviour
 		else if( Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow) )
 		{
 			MoveRight();
+		}
+		else if( Input.GetKeyDown(KeyCode.Q) )
+		{
+			Rotate( false );
+		}
+		else if( Input.GetKeyDown(KeyCode.E) )
+		{
+			Rotate( true );
 		}
 	}
 
