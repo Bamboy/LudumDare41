@@ -43,7 +43,7 @@ public struct Block
 		left = new BlockOrientation( 4, 1, new Vector2Int(0,0), true );
 		down = new BlockOrientation( 1, 4, new Vector2Int(0,3), true );
 		right = new BlockOrientation( 4, 1, new Vector2Int(3,0), true );
-		square.rotations = new List<BlockOrientation>(){ up, left, down, right };
+		b1x4.rotations = new List<BlockOrientation>(){ up, left, down, right };
 		blocks.Add( b1x4 );
 	}
 

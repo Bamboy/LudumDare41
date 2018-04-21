@@ -4,18 +4,29 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
 using TMPro;
+using Sirenix.OdinInspector;
 
 public class BoardUITile : MonoBehaviour 
 {
-
 	public BoxCollider2D collision;
 	public SpriteRenderer render;
 
 	public TextMeshPro text;
 
+	public TetrisBlock owner;
+
 	private int x;
 	private int y;
-	[HideInInspector]public int currentToken = -int.MaxValue;
+	[ReadOnly]public int token = -int.MaxValue;
+
+	/// Position of this tile in the world
+	public Vector2Int position
+	{
+		get{ return new Vector2Int(Mathf.FloorToInt( transform.position.x ), Mathf.FloorToInt( transform.position.y )); }
+		set{
+			transform.position = new Vector3( value.x, value.y, 0f );
+		}
+	}
 
 	public void Initalize(int x, int y)
 	{
@@ -24,18 +35,64 @@ public class BoardUITile : MonoBehaviour
 
 		text.text = string.Format("[{0}, {1}]", x, y);
 	}
+	public void Initalize(int x, int y, TetrisBlock owner)
+	{
+		Destroy( text.gameObject );
+
+		this.token = owner.template.token;
+		this.owner = owner;
+	}
+
+	void OnCollisionEnter2D( Collision2D col )
+	{
+		//TODO 
+
+
+	}
+
+
+	public bool CanMoveDown()
+	{
+		if( this.position.y < 0 )
+			return false;
+
+		RaycastHit2D[] data = Physics2D.RaycastAll( transform.position, Vector2.down, 1f );
+		DebugExtension.DebugArrow( transform.position, Vector3.down, Color.blue );
+
+		bool move = true;
+		foreach (RaycastHit2D hit in data) 
+		{
+			if( hit.transform == this.transform )
+				continue;
+			
+			BoardUITile otherTile = hit.collider.gameObject.GetComponent<BoardUITile>();
+
+			if( owner.tiles.Contains( otherTile ) ) //Ignore other tiles that are part of this tetris block
+				continue;
+			else
+			{
+				move = false;
+				break;
+			}
+		}
+
+		return move;
+	}
 
 	public void Set( int token )
 	{
-		if( token == currentToken )
+		if( token < 0 )
+			token = 0;
+
+		if( this.token == token )
 		{
 			Debug.Log("No change");
 			return;
 		}
+
 		collision.enabled = token != 0;
-			
 
 		render.sprite = GameManager.singleton.tileSprites[token];
-		currentToken = token;
+		this.token = token;
 	}
 }

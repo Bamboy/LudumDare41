@@ -7,6 +7,9 @@ public class GameManager : MonoBehaviour
 	private static GameManager _instance;
 	public static GameManager singleton{ get{ return _instance; } }
 
+
+	public Queue<Block> upcomingBlocks;
+
 	public float gameUpdateSpeed = 0.8f;
 
 	public List<Sprite> tileSprites;
@@ -30,35 +33,58 @@ public class GameManager : MonoBehaviour
 			Destroy( this.gameObject );
 			return;
 		}
+
+
 	}
 
 	void Start()
 	{
 		Block.BuildBlocks();
+		upcomingBlocks = new Queue<Block>();
 
-		board = new Board( boardSizeX, boardSizeY );
+		board = new Board( boardSizeX, boardSizeY, 0 );
 
 		boardRendering.Initalize( board );
+		board.DirtyAll();
 
+		upcomingBlocks = new Queue<Block>();
+		upcomingBlocks.Enqueue(
+			Block.blocks[Random.Range(0, Block.blocks.Count)]
+		);
+		upcomingBlocks.Enqueue(
+			Block.blocks[Random.Range(0, Block.blocks.Count)]
+		);
 
-		fallingBlock.Initalize( Block.blocks[0] );
+		fallingBlock.Initalize( Block.blocks[1] );
 
 		StartCoroutine( GameUpdater() );
 	}
-
-
-
+		
 	void GameUpdate()
 	{
-		fallingBlock.OnGameUpdate();
+		if( fallingBlock.active == false )
+		{
+			fallingBlock.Initalize( upcomingBlocks.Dequeue() );
 
+			upcomingBlocks.Enqueue(
+				Block.blocks[Random.Range(0, Block.blocks.Count)]
+			);
+		}
+		else
+			fallingBlock.OnGameUpdate();
+
+		/*
 		for (int x = 0; x < board.width; x++) 
 		{
 			for (int y = 0; y < board.height; y++)
 			{
 				//board[x,y] = VectorExtras.SplitChance() ? 0 : 1;
 			}
-		}
+		} */
+	}
+	public void ForceGameUpdate()
+	{
+		_timeTillUpdate = gameUpdateSpeed;
 	}
 
 	void LateUpdate()

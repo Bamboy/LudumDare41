@@ -140,12 +140,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d8e060ebf3bad942b6e75e6f11215b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameUpdateSpeed: 0.8
+  gameUpdateSpeed: 0.3
   tileSprites:
   - {fileID: 21300000, guid: 978bc9953b6df0b488527d6a69c33229, type: 3}
   - {fileID: 21300000, guid: f6e6accaa8ee6f545a8219ecf2f2493a, type: 3}
   boardSizeX: 10
   boardSizeY: 20
+  board:
+    isDirty: 0
+    blockSpawn: {x: 0, y: 0}
   boardRendering: {fileID: 1793983682}
   fallingBlock: {fileID: 1259121367}
 --- !u!4 &1140561703
@@ -171,7 +174,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1259121368}
   - component: {fileID: 1259121367}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Tetris Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -190,7 +193,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotation: 0
-  position: {x: 0, y: 0}
+  tiles: []
 --- !u!4 &1259121368
 Transform:
   m_ObjectHideFlags: 0
@@ -199,7 +202,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1259121366}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 25, z: 0}
+  m_LocalPosition: {x: 0, y: 21, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1634632685}
@@ -245,6 +248,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 33518269631610336, guid: 0a0cba25aefde73418b3287ea78f9c6c,
+        type: 2}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 114921471793709722, guid: 0a0cba25aefde73418b3287ea78f9c6c,
         type: 2}
       propertyPath: m_havePropertiesChanged
@@ -255,10 +263,10 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 33518269631610336, guid: 0a0cba25aefde73418b3287ea78f9c6c,
+    - target: {fileID: 61469501688568570, guid: 0a0cba25aefde73418b3287ea78f9c6c,
         type: 2}
-      propertyPath: m_Mesh
-      value: 
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0a0cba25aefde73418b3287ea78f9c6c, type: 2}
@@ -353,7 +361,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1634632685}
   - component: {fileID: 1634632684}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: New Sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -366,7 +374,7 @@ SpriteRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1634632682}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -440,7 +448,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1793983680}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -459,3 +467,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tileSize: 1
   tilePrefab: {fileID: 1389695045320386, guid: 0a0cba25aefde73418b3287ea78f9c6c, type: 2}
+  tracking:
+    isDirty: 0
+    blockSpawn: {x: 0, y: 0}

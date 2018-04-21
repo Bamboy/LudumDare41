@@ -2,10 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Sirenix.OdinInspector;
 
 public delegate void PositionDelegate(int x, int y);
 
-
+[Serializable]
 public class Board
 {
 	public static readonly Vector2Int OUTOFBOUNDS = new Vector2Int(int.MinValue, int.MinValue);
@@ -15,6 +16,7 @@ public class Board
 	public static readonly Vector2Int RIGHT = new Vector2Int( 1, 0);
 
 	/// The tiles on our board. The int represents which player owns that space. Zero is nobody
+	[ShowInInspector]
 	public int[,] tiles;
 
 	/// Tiles that need to be updated in the UI.
@@ -45,7 +47,8 @@ public class Board
 			}
 		}
 
-		ClearDirty();
+		DirtyAll();
+		ResolveDirty();
 	}
 
 	/// Creates a copy of the given board
@@ -77,6 +80,20 @@ public class Board
 		}
 	}
 
+
+	/// Marks all blocks to update
+	public void DirtyAll()
+	{
+		dirtyTiles = new bool[width, height];
+		for (int x = 0; x < width; x++) 
+		{
+			for (int y = 0; y < height; y++) 
+			{
+				dirtyTiles[x, y] = true;
+			}
+		}
+		isDirty = true;
+	}
 	public void ClearDirty()
 	{
 		dirtyTiles = new bool[width, height];
