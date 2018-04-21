@@ -1,4 +1,4 @@
-namespace UnityEngine.PostProcessing
+﻿namespace UnityEngine.PostProcessing
 {
     public sealed class BloomComponent : PostProcessingComponentRenderTexture<BloomModel>
     {
