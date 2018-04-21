@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
 	public Queue<Block> upcomingBlocks;
 
 	public float gameUpdateSpeed = 0.8f;
+	public float holdDownMultiplier = 5f;
 
 	public List<Sprite> tileSprites;
 
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
 
 	public TetrisBlock fallingBlock;
 
+	private float _timeMultiplier = 1f;
 	void Awake()
 	{
 		if( _instance == null )
@@ -59,6 +61,13 @@ public class GameManager : MonoBehaviour
 
 		StartCoroutine( GameUpdater() );
 	}
+
+	void Update()
+	{
+		_timeMultiplier = 
+			(Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) ?
+			holdDownMultiplier : 1f;
+	}
 		
 	void GameUpdate()
 	{
@@ -72,6 +81,8 @@ public class GameManager : MonoBehaviour
 		}
 		else
 			fallingBlock.OnGameUpdate();
+
+
 
 		/*
 		for (int x = 0; x < board.width; x++) 
@@ -98,7 +109,7 @@ public class GameManager : MonoBehaviour
 		_timeTillUpdate = gameUpdateSpeed;
 		while( true )
 		{
-			_timeTillUpdate -= Time.deltaTime;
+			_timeTillUpdate -= (Time.deltaTime * _timeMultiplier);
 
 			if( _timeTillUpdate <= 0f )
 			{

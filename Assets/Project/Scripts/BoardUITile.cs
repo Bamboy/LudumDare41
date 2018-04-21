@@ -28,6 +28,7 @@ public class BoardUITile : MonoBehaviour
 		}
 	}
 
+
 	public void Initalize(int x, int y)
 	{
 		this.x = x;
@@ -65,6 +66,60 @@ public class BoardUITile : MonoBehaviour
 			if( hit.transform == this.transform )
 				continue;
 			
+			BoardUITile otherTile = hit.collider.gameObject.GetComponent<BoardUITile>();
+
+			if( owner.tiles.Contains( otherTile ) ) //Ignore other tiles that are part of this tetris block
+				continue;
+			else
+			{
+				move = false;
+				break;
+			}
+		}
+
+		return move;
+	}
+	public bool CanMoveLeft()
+	{
+		if( this.position.x <= 0 )
+			return false;
+
+		RaycastHit2D[] data = Physics2D.RaycastAll( transform.position, Vector2.left, 1f );
+		DebugExtension.DebugArrow( transform.position, Vector3.down, Color.cyan );
+
+		bool move = true;
+		foreach (RaycastHit2D hit in data) 
+		{
+			if( hit.transform == this.transform )
+				continue;
+
+			BoardUITile otherTile = hit.collider.gameObject.GetComponent<BoardUITile>();
+
+			if( owner.tiles.Contains( otherTile ) ) //Ignore other tiles that are part of this tetris block
+				continue;
+			else
+			{
+				move = false;
+				break;
+			}
+		}
+
+		return move;
+	}
+	public bool CanMoveRight()
+	{
+		if( this.position.x >= GameManager.singleton.board.tiles.GetLength(0) - 1 )
+			return false;
+
+		RaycastHit2D[] data = Physics2D.RaycastAll( transform.position, Vector2.right, 1f );
+		DebugExtension.DebugArrow( transform.position, Vector3.down, Color.cyan );
+
+		bool move = true;
+		foreach (RaycastHit2D hit in data) 
+		{
+			if( hit.transform == this.transform )
+				continue;
+
 			BoardUITile otherTile = hit.collider.gameObject.GetComponent<BoardUITile>();
 
 			if( owner.tiles.Contains( otherTile ) ) //Ignore other tiles that are part of this tetris block

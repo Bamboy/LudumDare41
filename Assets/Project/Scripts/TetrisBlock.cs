@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 
 public class TetrisBlock : MonoBehaviour
 {
-	public float holdDownTimer = 0.2f;
 
 	private Block _template;
 	public Block template{ get{ return _template; } private set{ _template = value; } }
@@ -25,11 +24,6 @@ public class TetrisBlock : MonoBehaviour
 
 
 	public List<BoardUITile> tiles;
-
-	void Start()
-	{
-		StartCoroutine( MoveDownLoop() );
-	}
 
 	public void Initalize( Block template, int rotation = 0 )
 	{
@@ -62,9 +56,7 @@ public class TetrisBlock : MonoBehaviour
 		}
 
 	}
-
-
-
+		
 	public void OnGameUpdate()
 	{
 		if( active )
@@ -78,7 +70,6 @@ public class TetrisBlock : MonoBehaviour
 		foreach (BoardUITile tile in tiles) 
 		{
 			//TODO place children on board.
-
 			Vector2Int tilePos = tile.position + Vector2Int.up;
 			if( GameManager.singleton.board.IsInBounds( tilePos ) )
 			{
@@ -112,21 +103,39 @@ public class TetrisBlock : MonoBehaviour
 		{
 			MoveRight();
 		}
-		else
-		{
-
-
-		}
 	}
+
 	void MoveLeft()
 	{
+		bool moveLeft = true;
+		foreach (BoardUITile tile in tiles) 
+		{
+			if( tile.CanMoveLeft() == false )
+			{
+				moveLeft = false;
+				break;
+			}
+		}
+		if( moveLeft )
+			position += new Vector2Int(-1, 0);
 
-		GameManager.singleton.ForceGameUpdate();
+		//GameManager.singleton.ForceGameUpdate();
 	}
 	void MoveRight()
 	{
-
-		GameManager.singleton.ForceGameUpdate();
+		bool moveRight = true;
+		foreach (BoardUITile tile in tiles) 
+		{
+			if( tile.CanMoveRight() == false )
+			{
+				moveRight = false;
+				break;
+			}
+		}
+		if( moveRight )
+			position += new Vector2Int(1, 0);
+		
+		//GameManager.singleton.ForceGameUpdate();
 	}
 	void MoveDown()
 	{
@@ -149,36 +158,35 @@ public class TetrisBlock : MonoBehaviour
 			DetatchChildren();
 		}
 	}
-
+	/*
 	private float _holdDownTimer;
 	IEnumerator MoveDownLoop()
 	{
 		_holdDownTimer = holdDownTimer;
 		while( true )
 		{
-			if( active == false )
+			if( active )
 			{
-				yield return null;
-				continue;
-			}
-
-			if( Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.PageDown) )
-			{
-				_holdDownTimer -= Time.deltaTime;
-
-				if( _holdDownTimer <= 0f )
+				if( Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) )
 				{
-					GameManager.singleton.ForceGameUpdate(); //This will also move our block down!
+					_holdDownTimer -= Time.deltaTime;
 
-					_holdDownTimer = holdDownTimer;
+					if( _holdDownTimer <= 0f )
+					{
+						GameManager.singleton.ForceGameUpdate(); //This will also move our block down!
+
+						_holdDownTimer = holdDownTimer;
+					}
 				}
+				else
+					_holdDownTimer = holdDownTimer;
+				
 			}
-			else
-				_holdDownTimer = holdDownTimer;
-			
+
+
 			yield return null;
 		}
-	}
+	} */
 
 	#endregion
 
