@@ -46,7 +46,6 @@ public class BoardUI : MonoBehaviour
 		//Update the specified BoardUITile when the specified board tile has changed.
 		tracking.onResolveDirty += delegate(int tx, int ty) 
 		{
-			Debug.Log("Tile resolve");
 			this.tiles[tx, ty].Set( data[tx, ty] );
 		};
 

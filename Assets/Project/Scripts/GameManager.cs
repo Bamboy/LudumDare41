@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
 
 	public TetrisBlock fallingBlock;
 
+	public VectorGrid vectorMesh;
+
 	private float _timeMultiplier = 1f;
 	void Awake()
 	{

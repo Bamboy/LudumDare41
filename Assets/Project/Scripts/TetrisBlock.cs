@@ -5,7 +5,6 @@ using Sirenix.OdinInspector;
 
 public class TetrisBlock : MonoBehaviour
 {
-
 	private Block _template;
 	public Block template{ get{ return _template; } private set{ _template = value; } }
 
@@ -16,9 +15,11 @@ public class TetrisBlock : MonoBehaviour
 		set
 		{
 			_rotation = (int)Mathf.Repeat((float)value, (float)template.rotations.Count);
-			Debug.Log( rotation );
 		}
 	}
+
+	public float blockPlaceVectorgridForce = 1f;
+	public float blockPlaceVectorgridRadius = 0.5f;
 
 	public bool active{ get; private set; }
 
@@ -76,19 +77,24 @@ public class TetrisBlock : MonoBehaviour
 
 	public void DetatchChildren()
 	{
+		Color forceColor = tiles[0].GetComponent<TileAnimator>().tileSet.blockColor;
 		foreach (BoardUITile tile in tiles) 
 		{
-			//TODO place children on board.
 			Vector2Int tilePos = tile.position + Vector2Int.up;
 			if( GameManager.singleton.board.IsInBounds( tilePos ) )
 			{
-				GameManager.singleton.board[tilePos.x, tilePos.y] = tile.token;
-				Debug.Log("Placed tile " + tilePos);
+				GameManager.singleton.vectorMesh.AddGridForce(tile.transform.position, blockPlaceVectorgridForce, blockPlaceVectorgridRadius, forceColor, true);
 
+				GameManager.singleton.board[tilePos.x, tilePos.y] = tile.token;
 			}
-			
+		}
+
+		foreach (BoardUITile tile in tiles) 
+		{
 			Destroy( tile.gameObject );
 		}
+		GameManager.singleton.board.ResolveDirty();
+
 		tiles = new List<BoardUITile>();
 		active = false;
 	}

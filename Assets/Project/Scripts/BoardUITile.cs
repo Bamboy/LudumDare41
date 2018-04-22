@@ -148,7 +148,6 @@ public class BoardUITile : MonoBehaviour
 
 		if( this.token == token )
 		{
-			Debug.Log("No change");
 			return;
 		}
 

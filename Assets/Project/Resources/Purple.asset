@@ -11,7 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 169d9dd8dc73aca44949184bffdf2ea5, type: 3}
   m_Name: Purple
   m_EditorClassIdentifier: 
-  speed: 0.2
+  blockColor: {r: 1, g: 0, b: 1, a: 1}
+  speed: 0.1
   sprites:
   - {fileID: 21300040, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
   - {fileID: 21300042, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}

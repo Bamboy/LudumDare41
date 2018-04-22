@@ -11,6 +11,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 169d9dd8dc73aca44949184bffdf2ea5, type: 3}
   m_Name: Empty
   m_EditorClassIdentifier: 
+  blockColor: {r: 0, g: 0, b: 0, a: 0}
   speed: 0
   sprites:
   - {fileID: 21300000, guid: 978bc9953b6df0b488527d6a69c33229, type: 3}
+  destroySprites: []
