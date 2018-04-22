@@ -16,6 +16,7 @@ public class TetrisBlock : MonoBehaviour
 		set
 		{
 			_rotation = (int)Mathf.Repeat((float)value, (float)template.rotations.Count);
+			Debug.Log( rotation );
 		}
 	}
 

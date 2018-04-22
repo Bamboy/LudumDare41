@@ -146,9 +146,11 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 05fb8f49cb826f744888a2c3e41d0e78, type: 2}
   - {fileID: 11400000, guid: b279f6269a2da96429dabbf860b9339f, type: 2}
   - {fileID: 11400000, guid: dbba43046f4fd7340b85448cc81720f4, type: 2}
-  - {fileID: 11400000, guid: af349c67bfafc8e4d923bfc249309abf, type: 2}
   - {fileID: 11400000, guid: 829091268bb90934c8a0aac3a84c465e, type: 2}
   - {fileID: 11400000, guid: d6f5ee0a4f28fe44b99e29c5b5814bca, type: 2}
+  - {fileID: 11400000, guid: df21366ff57a78a41a38bd9a20efef8b, type: 2}
+  - {fileID: 11400000, guid: af349c67bfafc8e4d923bfc249309abf, type: 2}
+  - {fileID: 11400000, guid: c4b65e04d77fc0c458fb1753ac139c38, type: 2}
   boardSizeX: 10
   boardSizeY: 20
   board:

@@ -11,4 +11,5 @@ public class TileAnimationSet : ScriptableObject
 
 	public List<Sprite> sprites;
 
+	public List<Sprite> destroySprites;
 }

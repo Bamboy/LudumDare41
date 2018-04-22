@@ -18,3 +18,6 @@ MonoBehaviour:
   - {fileID: 21300034, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
   - {fileID: 21300036, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
   - {fileID: 21300038, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
+  destroySprites:
+  - {fileID: 21300036, guid: 32585b5b72d38934999b3ab717c58510, type: 3}
+  - {fileID: 21300026, guid: 32585b5b72d38934999b3ab717c58510, type: 3}
