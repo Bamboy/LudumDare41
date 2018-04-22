@@ -69,14 +69,18 @@ public class TetrisBlock : MonoBehaviour
 		
 	public void OnGameUpdate()
 	{
-		if( active )
-		{
-			MoveDown();
-		}
+		if( active == false )
+			return;
+		
+		MoveDown();
+
 	}
 
 	public void DetatchChildren()
 	{
+		if( active == false )
+			return;
+		
 		Color forceColor = tiles[0].GetComponent<TileAnimator>().tileSet.blockColor;
 		foreach (BoardUITile tile in tiles) 
 		{
@@ -103,7 +107,8 @@ public class TetrisBlock : MonoBehaviour
 	/// Tries to rotate this block. Returns true if the rotation is possible.
 	public bool Rotate( bool clockwise )
 	{
-		
+		if( active == false )
+			return false;
 
 		int newRot = (int)Mathf.Repeat(rotation + (clockwise ? 1f : -1f), (float)template.rotations.Count);
 
@@ -175,6 +180,9 @@ public class TetrisBlock : MonoBehaviour
 	#region input
 	public void Update()
 	{
+		if( active == false )
+			return;
+		
 		if( Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow) )
 		{
 			MoveLeft();
@@ -199,6 +207,9 @@ public class TetrisBlock : MonoBehaviour
 
 	void MoveLeft()
 	{
+		if( active == false )
+			return;
+		
 		bool moveLeft = true;
 		foreach (BoardUITile tile in tiles) 
 		{
@@ -215,6 +226,9 @@ public class TetrisBlock : MonoBehaviour
 	}
 	void MoveRight()
 	{
+		if( active == false )
+			return;
+		
 		bool moveRight = true;
 		foreach (BoardUITile tile in tiles) 
 		{
@@ -231,6 +245,9 @@ public class TetrisBlock : MonoBehaviour
 	}
 	void MoveDown()
 	{
+		if( active == false )
+			return;
+		
 		bool moveDown = true;
 		foreach (BoardUITile tile in tiles) 
 		{
