@@ -143,8 +143,12 @@ MonoBehaviour:
   gameUpdateSpeed: 0.3
   holdDownMultiplier: 5
   tileSprites:
-  - {fileID: 21300000, guid: 978bc9953b6df0b488527d6a69c33229, type: 3}
-  - {fileID: 21300000, guid: f6e6accaa8ee6f545a8219ecf2f2493a, type: 3}
+  - {fileID: 11400000, guid: 05fb8f49cb826f744888a2c3e41d0e78, type: 2}
+  - {fileID: 11400000, guid: b279f6269a2da96429dabbf860b9339f, type: 2}
+  - {fileID: 11400000, guid: dbba43046f4fd7340b85448cc81720f4, type: 2}
+  - {fileID: 11400000, guid: af349c67bfafc8e4d923bfc249309abf, type: 2}
+  - {fileID: 11400000, guid: 829091268bb90934c8a0aac3a84c465e, type: 2}
+  - {fileID: 11400000, guid: d6f5ee0a4f28fe44b99e29c5b5814bca, type: 2}
   boardSizeX: 10
   boardSizeY: 20
   board:
@@ -193,7 +197,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8dbd63ddc20e55b4584bdc598d656976, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotation: 0
   tiles: []
 --- !u!4 &1259121368
 Transform:
@@ -264,11 +267,6 @@ Prefab:
       propertyPath: m_isInputParsingRequired
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 61469501688568570, guid: 0a0cba25aefde73418b3287ea78f9c6c,
-        type: 2}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 0a0cba25aefde73418b3287ea78f9c6c, type: 2}
   m_IsPrefabParent: 0
@@ -324,7 +322,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -347,7 +345,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1539996614}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 5, y: 8.3, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

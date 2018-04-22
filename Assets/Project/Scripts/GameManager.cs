@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 	public float gameUpdateSpeed = 0.8f;
 	public float holdDownMultiplier = 5f;
 
-	public List<Sprite> tileSprites;
+	public List<TileAnimationSet> tileSprites;
 
 	public int boardSizeX;
 	public int boardSizeY;

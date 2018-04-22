@@ -16,8 +16,6 @@ public class TetrisBlock : MonoBehaviour
 		set
 		{
 			_rotation = (int)Mathf.Repeat((float)value, (float)template.rotations.Count);
-
-
 		}
 	}
 
@@ -44,7 +42,6 @@ public class TetrisBlock : MonoBehaviour
 		transform.rotation = Quaternion.identity;
 		tiles = new List<BoardUITile>();
 
-		rotation = 1;
 		GameObject prefab = GameManager.singleton.boardRendering.tilePrefab;
 		Vector2 offset = template.rotations[rotation].pivot;
 		for (int x = 0; x < template.rotations[rotation].tiles.GetLength(0); x++) 
@@ -99,12 +96,52 @@ public class TetrisBlock : MonoBehaviour
 	/// Tries to rotate this block. Returns true if the rotation is possible.
 	public bool Rotate( bool clockwise )
 	{
-		//transform.Rotate( 0f, 0f, clockwise ? -90f : 90f );
+		
 
 		int newRot = (int)Mathf.Repeat(rotation + (clockwise ? 1f : -1f), (float)template.rotations.Count);
 
-		//TODO check for colliding blocks here before actually rotating
+		bool canRotate = true;
+		//Check for colliding spaces before rotating
+		for (int x = 0; x < template.rotations[newRot].tiles.GetLength(0); x++) 
+		{
+			for (int y = 0; y < template.rotations[newRot].tiles.GetLength(1); y++) 
+			{
+				if( template.rotations[newRot].tiles[x,y] == false )
+					continue;
 
+				//Move each tile to its new rotated position. 
+				//This assumes that each rotation keeps the same number of tiles.
+
+				int px = x - template.rotations[newRot].pivot.x + position.x;
+				int py = y - template.rotations[newRot].pivot.y + position.y;
+
+				Collider2D[] intersections = Physics2D.OverlapCircleAll( new Vector2(px, py), 0.4f );
+				DebugExtension.DebugWireSphere(new Vector2(px, py), 0.4f);
+
+				foreach (Collider2D col in intersections) //TODO - check if we are out of bounds!
+				{
+					BoardUITile colTile = col.gameObject.GetComponent<BoardUITile>();
+					if( colTile == null )
+						return false; //We hit some other collider that isn't a tile. Don't rotate.
+
+					if( tiles.Contains( colTile ) )
+						continue;
+					else
+					{
+						return false;
+					}
+				}
+
+				/*
+				tiles[i].transform.localPosition = new Vector3( 
+					x - template.rotations[newRot].pivot.x, 
+					y - template.rotations[newRot].pivot.y, 0f );
+
+				i++; */
+			}
+		}
+
+		//Rotate our existing tiles
 		int i = 0;
 		for (int x = 0; x < template.rotations[newRot].tiles.GetLength(0); x++) 
 		{
@@ -141,11 +178,15 @@ public class TetrisBlock : MonoBehaviour
 		}
 		else if( Input.GetKeyDown(KeyCode.Q) )
 		{
-			Rotate( false );
+			bool didRot = Rotate( false );
+			if( didRot == false )
+				Debug.Log("Blocked!");
 		}
 		else if( Input.GetKeyDown(KeyCode.E) )
 		{
-			Rotate( true );
+			bool didRot = Rotate( true );
+			if( didRot == false )
+				Debug.Log("Blocked!");
 		}
 	}
 
@@ -202,35 +243,6 @@ public class TetrisBlock : MonoBehaviour
 			DetatchChildren();
 		}
 	}
-	/*
-	private float _holdDownTimer;
-	IEnumerator MoveDownLoop()
-	{
-		_holdDownTimer = holdDownTimer;
-		while( true )
-		{
-			if( active )
-			{
-				if( Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) )
-				{
-					_holdDownTimer -= Time.deltaTime;
-
-					if( _holdDownTimer <= 0f )
-					{
-						GameManager.singleton.ForceGameUpdate(); //This will also move our block down!
-
-						_holdDownTimer = holdDownTimer;
-					}
-				}
-				else
-					_holdDownTimer = holdDownTimer;
-				
-			}
-
-
-			yield return null;
-		}
-	} */
 
 	#endregion
 

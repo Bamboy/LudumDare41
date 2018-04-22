@@ -9,7 +9,7 @@ using Sirenix.OdinInspector;
 public class BoardUITile : MonoBehaviour 
 {
 	public BoxCollider2D collision;
-	public SpriteRenderer render;
+	private TileAnimator render;
 
 	public TextMeshPro text;
 
@@ -28,6 +28,10 @@ public class BoardUITile : MonoBehaviour
 		}
 	}
 
+	void Awake()
+	{
+		render = GetComponent<TileAnimator>();
+	}
 
 	public void Initalize(int x, int y)
 	{
@@ -43,6 +47,8 @@ public class BoardUITile : MonoBehaviour
 
 		this.token = owner.template.token;
 		this.owner = owner;
+
+		render.SetTiles( GameManager.singleton.tileSprites[this.token] );
 	}
 
 	void OnCollisionEnter2D( Collision2D col )
@@ -148,7 +154,7 @@ public class BoardUITile : MonoBehaviour
 
 		collision.enabled = token != 0;
 
-		render.sprite = GameManager.singleton.tileSprites[token];
+		render.SetTiles( GameManager.singleton.tileSprites[token] );
 		this.token = token;
 	}
 }

@@ -38,7 +38,7 @@ public struct Block
 
 
 		Block b1x4 = new Block();
-		b1x4.token = 1;
+		b1x4.token = 2;
 		up = new BlockOrientation( 1, 4, new Vector2Int(0,0), true );
 		left = new BlockOrientation( 4, 1, new Vector2Int(0,0), true );
 		down = new BlockOrientation( 1, 4, new Vector2Int(0,3), true );
