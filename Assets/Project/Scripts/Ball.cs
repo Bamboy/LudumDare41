@@ -29,6 +29,8 @@ public class Ball : MonoBehaviour {
 
     bool adding = false;
 
+    int numAdded = 0;
+
     [SerializeField]
     private Vector2 velocity;
 
@@ -45,6 +47,15 @@ public class Ball : MonoBehaviour {
         Physics2D.showColliderAABB = true;
 
         rbody.AddForce(velocity, ForceMode2D.Impulse);
+    }
+
+    void SetAdding(bool isAdding)
+    {
+        adding = isAdding;
+        TrailRenderer trail = GetComponentInChildren<TrailRenderer>();
+        trail.startColor = adding ? addColor : removeColor;
+        trail.endColor = trail.startColor;
+        rbody.velocity = rbody.velocity + Random.insideUnitCircle;
     }
 
     private int wallBounces = 0;
@@ -76,6 +87,10 @@ public class Ball : MonoBehaviour {
                         board[xPos, yPos] = Random.Range(1, 7);
                     }
 
+                    if (++numAdded >= 5) {
+                        SetAdding(false);
+                        numAdded = 0;
+                    }
                 } else {
                     board[tile.x, tile.y] = 0;
 
@@ -87,16 +102,13 @@ public class Ball : MonoBehaviour {
 
                     GameManager.singleton.ballHitsCombo++;
                 }
+
                 return;
             } else {
                 //We hit a falling tetris piece
                 player.PlayOneShot( paddleImpact );
 
-                adding = !adding;
-                TrailRenderer trail = GetComponentInChildren<TrailRenderer>();
-                trail.startColor = adding ? addColor : removeColor;
-                trail.endColor = trail.startColor;
-                rbody.velocity = rbody.velocity + Random.insideUnitCircle;
+                SetAdding(true);
             }
         } else {
             //We hit a wall or something?
