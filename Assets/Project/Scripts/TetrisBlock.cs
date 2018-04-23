@@ -40,9 +40,13 @@ public class TetrisBlock : MonoBehaviour
 	public List<BoardUITile> tiles;
 
 	private AudioSource player;
+	public AudioClip blockMoveDeny;
 	public AudioClip blockRotate;
 	public AudioClip blockMove;
 	public AudioClip blockPlace;
+
+
+	public AudioClip rowCleared;
 	void Start()
 	{
 		player = GetComponent<AudioSource>();
@@ -135,17 +139,20 @@ public class TetrisBlock : MonoBehaviour
 		}
 		else
 		{
+			GameManager.singleton.ClearedRows( clearedRows.Count );
 			foreach (int row in clearedRows) 
 			{
 				for (int x = 0; x < board.tiles.GetLength(0); x++)
 				{
-					GameManager.singleton.vectorMesh.AddGridForce(new Vector3(x, row, 0f), rowClearVectorgridForce, rowClearVectorgridRadius, rowClearVectorgridColor, true);
+					GameManager.singleton.vectorMesh.AddGridForce(new Vector3(x, row, 0f), rowClearVectorgridForce * clearedRows.Count, rowClearVectorgridRadius * clearedRows.Count, rowClearVectorgridColor, true);
 
 					board[x,row] = 0;
 				}
 			}
 
 			board.DropEmptyRows();
+
+			player.PlayOneShot( rowCleared );
 		}
 
 		foreach (BoardUITile tile in tiles) 
@@ -241,17 +248,24 @@ public class TetrisBlock : MonoBehaviour
 		{
 			MoveRight();
 		}
-		else if( Input.GetKeyDown(KeyCode.Q) )
+
+		if( Input.GetKeyDown(KeyCode.Q) )
 		{
 			bool didRot = Rotate( false );
 			if( didRot == false )
+			{
 				Debug.Log("Blocked!");
+				player.PlayOneShot( blockMoveDeny );
+			}
 		}
 		else if( Input.GetKeyDown(KeyCode.E) )
 		{
 			bool didRot = Rotate( true );
 			if( didRot == false )
+			{
 				Debug.Log("Blocked!");
+				player.PlayOneShot( blockMoveDeny );
+			}
 		}
 	}
 

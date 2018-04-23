@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour
 
 	public float gameUpdateSpeed = 0.8f;
 	public float holdDownMultiplier = 5f;
+	public float holdUpMultiplier = 0.5f;
 
 	public List<TileAnimationSet> tileSprites;
 
@@ -25,6 +26,85 @@ public class GameManager : MonoBehaviour
 	public TetrisBlock fallingBlock;
 
 	public VectorGrid vectorMesh;
+
+	#region Score
+	private int _score;
+	public int score{ 
+		get{ return _score; }
+		set{
+			_score = value;
+			Scoreboard.singleton.UpdateUI();
+		}
+	}
+	private float _scoreMult = 1f;
+	/// <summary>
+	/// Gets or sets the score multiplier.
+	/// </summary>
+	/// <value>The score multiplier.</value>
+	public float scoreMultiplier
+	{
+		get{ return _scoreMult; }
+		set{
+			_scoreMult = value;
+			Scoreboard.singleton.UpdateUI();
+		}
+	}
+
+	private float _scoreCombo = 0f;
+	/// <summary>
+	/// Pending score that has not been multiplied by our multiplier
+	/// </summary>
+	public float scoreCombo
+	{
+		get{ return _scoreCombo; }
+		set{
+			_scoreCombo = value;
+			Scoreboard.singleton.UpdateUI();
+		}
+	}
+
+	public void ClearedRows( int rows )
+	{
+		int s = 100 * (rows ^ 2);
+		scoreCombo += (float)s;
+
+		scoreMultiplier += (float)rows * 2f;
+
+		rowsClearedCombo += rows;
+	}
+
+	public void BallHitBlock()
+	{
+		ballHitsCombo++;
+		scoreCombo += 3f;
+		scoreMultiplier += 0.2f;
+	}
+
+	private int _ballhitcombo;
+	public int ballHitsCombo
+	{
+		get{ return _ballhitcombo; }
+		set{ _ballhitcombo = value; Scoreboard.singleton.UpdateUI(); }
+	}
+	private int _rowsClearedCombo;
+	public int rowsClearedCombo
+	{
+		get{ return _rowsClearedCombo; }
+		set{ _rowsClearedCombo = value; Scoreboard.singleton.UpdateUI(); }
+	}
+
+	public void FinishCombo()
+	{
+		scoreCombo += ((float)ballHitsCombo * 1.2f) + ((float)rowsClearedCombo * 5f);
+		GameManager.singleton.score += Mathf.FloorToInt(scoreCombo * scoreMultiplier);
+
+		ballHitsCombo = 0;
+		rowsClearedCombo = 0;
+
+		scoreCombo = 0f;
+		scoreMultiplier = 1f;
+	}
+	#endregion
 
 	private float _timeMultiplier = 1f;
 	void Awake()
@@ -67,9 +147,14 @@ public class GameManager : MonoBehaviour
 
 	void Update()
 	{
-		_timeMultiplier = 
-			(Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow)) ?
-			holdDownMultiplier : 1f;
+
+		if( Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) )
+			_timeMultiplier = holdDownMultiplier;
+		else if(Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+			_timeMultiplier = holdUpMultiplier;
+		else
+			_timeMultiplier = 1f;
+
 	}
 		
 	void GameUpdate()

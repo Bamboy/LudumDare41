@@ -12,14 +12,18 @@ public class Ball : MonoBehaviour
 			targetSpeed = value;
 		}
 	}
-
-	public AudioClip paddleImpact;
+		
 	public AudioClip wallImpact;
 	public AudioClip blockImpact;
 
-	public bool customPhysics = false;
+	public int hits;
 
 	public float targetSpeed = 2f;
+	public float accelToTargetSpeed = 0.01f;
+
+	public float upperSpeed = 25f;
+	public float deccelToUpperSpeed = 1f;
+
 
 	[SerializeField]
 	private Vector2 velocity;
@@ -27,127 +31,75 @@ public class Ball : MonoBehaviour
 	private Rigidbody2D rbody;
 	private CircleCollider2D col;
 
-	[SerializeField]
-	private float _collisionSkin = -0.02f;
 	private AudioSource player;
 	void Start()
 	{
 		col = GetComponent<CircleCollider2D>();
 		rbody = GetComponent<Rigidbody2D>();
 		player = GetComponent<AudioSource>();
-		velocity = (Vector2.right + Vector2.down) * targetSpeed;
 
 		Physics2D.showColliderAABB = true;
 
 		rbody.AddForce(velocity, ForceMode2D.Impulse);
-
 	}
 
-
+	private int wallBounces = 0;
 	void OnCollisionEnter2D( Collision2D impact )
 	{
 		BoardUITile tile = impact.gameObject.GetComponent<BoardUITile>();
-		if( tile != null && tile.owner == null )
+		if( tile != null )
 		{
-			player.PlayOneShot( blockImpact );
-			GameManager.singleton.board[tile.x,tile.y] = 0;
+			wallBounces = 0;
+			if( tile.owner == null )
+			{
+				player.PlayOneShot( blockImpact );
+				GameManager.singleton.board[tile.x,tile.y] = 0;
 
-			GameObject glitchedTile = Instantiate<GameObject>( GameManager.singleton.boardRendering.tilePrefab, tile.transform.position, Quaternion.identity, tile.transform );
+				GameObject glitchedTile = Instantiate<GameObject>( GameManager.singleton.boardRendering.tilePrefab, tile.transform.position, Quaternion.identity, tile.transform );
 
-			BoardUITile visual = glitchedTile.GetComponent<BoardUITile>();
-			visual.Initalize( tile.token, true, GameManager.singleton.tileGlitchTime );
+				BoardUITile visual = glitchedTile.GetComponent<BoardUITile>();
+				visual.Initalize( tile.token, true, GameManager.singleton.tileGlitchTime );
 
-			return;
+				GameManager.singleton.ballHitsCombo++;
+				return;
+			}
+			else
+			{
+				//We hit a falling tetris piece
+			}
 		}
-
-
-
-		/*
-		Paddle pad = impact.gameObject.GetComponent<Paddle>();
-		if( pad != null )
+		else
 		{
-			player.PlayOneShot( paddleImpact );
-			return;
-		} */
+			//We hit a wall or something?
 
-		player.PlayOneShot( wallImpact );
-
+			wallBounces++;
+			if( wallBounces > 2 )
+			{
+				GameManager.singleton.FinishCombo();
+			}
+			
+			player.PlayOneShot( wallImpact );
+		}
 	}
 
 	void FixedUpdate()
 	{
-		if( customPhysics)
-		{
-			CustomPhysics();
-		}
-		else
-		{
 
-			if( rbody.velocity.magnitude < targetSpeed )
-			{
-				rbody.velocity = rbody.velocity.normalized * targetSpeed;
-			}
+		Vector2 additionalForce = Vector2.zero;
 
-		}
+		if( rbody.velocity.x < targetSpeed ) //Prevent getting stuck on a single axis.
+			additionalForce.x = Mathf.Sign(rbody.velocity.x) * accelToTargetSpeed;
+		else if( rbody.velocity.x > upperSpeed )
+			additionalForce.x = -Mathf.Sign(rbody.velocity.x) * deccelToUpperSpeed;
+
+		if( rbody.velocity.y < targetSpeed )
+			additionalForce.y = Mathf.Sign(rbody.velocity.y) * accelToTargetSpeed;
+		else if( rbody.velocity.x > upperSpeed )
+			additionalForce.y = -Mathf.Sign(rbody.velocity.y) * deccelToUpperSpeed;
+
+		if( additionalForce != Vector2.zero )
+			rbody.AddForce( additionalForce );
+		
 	}
-	void CustomPhysics()
-	{
-
-
-
-		float time = Time.deltaTime;
-
-		Vector2 pos = new Vector2(transform.position.x, transform.position.y);
-
-		Vector2 newPos;
-		Vector2 newVelocity = velocity;
-
-		newPos.x = pos.x + (velocity.x * time) + (time * (time+1f)) / 2f;
-		newPos.y = pos.y + (velocity.y * time) + (time * (time+1f)) / 2f;
-
-
-		Vector2 movement = newPos - pos;
-
-
-		RaycastHit2D[] data = Physics2D.CircleCastAll( pos, col.radius, movement, movement.magnitude );
-
-		DebugExtension.DebugArrow(VectorExtras.V3FromV2(pos), VectorExtras.V3FromV2(movement), Color.green);
-
-		foreach (RaycastHit2D hit in data) 
-		{
-			if( hit.collider == col )
-				continue; //Ignore our own collider
-
-			DebugExtension.DebugPoint( VectorExtras.V3FromV2(hit.point) );
-			DebugExtension.DebugArrow( VectorExtras.V3FromV2(hit.point), VectorExtras.V3FromV2(hit.normal), Color.white );
-
-			//Physics bouncing
-			Vector2 velReflect = Vector2.Reflect( velocity, hit.normal );
-
-			float distToCollision = Vector2.Distance( pos, hit.centroid );
-			float remainingDist = Vector2.Distance( pos, newPos ) - distToCollision; //movement.magnitude?
-
-
-			//Debug.Log(string.Format("CollisionDist: {0}, Remaining: {1}, TotalADD: {2}, TotalTarget: {3}", distToCollision, remainingDist, distToCollision + remainingDist, movement.magnitude));
-
-			Vector2 remainingMove = movement.normalized * remainingDist;
-
-			Vector2 reflection = Vector2.Reflect( remainingMove, hit.normal );
-
-
-			newVelocity = velReflect;
-			newPos = hit.centroid + reflection;
-
-			DebugExtension.DebugArrow(VectorExtras.V3FromV2(hit.centroid), VectorExtras.V3FromV2(reflection), Color.red);
-			//Debug.Break();
-
-			break;
-		}
-
-		velocity = newVelocity;
-		pos = newPos;
-		transform.position = new Vector3( newPos.x, newPos.y, 0f );
-	}
-
 
 }

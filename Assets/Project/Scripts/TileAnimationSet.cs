@@ -12,6 +12,8 @@ public class TileAnimationSet : ScriptableObject
 
 	public List<Sprite> sprites;
 
+	public float destroyAnimSpeed = 0.05f;
+
 	public List<Sprite> destroySprites;
 
 }

@@ -58,7 +58,7 @@ public class TileAnimator : MonoBehaviour
 		animation = sprites;
 		_renderer.enabled = true;
 		disableTime = Time.time + duration;
-		_remaining = tileSet.speed;
+		_remaining = isGlitched ? tileSet.destroyAnimSpeed : tileSet.speed;
 		while( true )
 		{
 			if( Time.time >= disableTime )
@@ -78,7 +78,7 @@ public class TileAnimator : MonoBehaviour
 			{
 				_spriteIndex = (int)Mathf.Repeat((float)_spriteIndex + 1f, (float)animation.Count);
 				_renderer.sprite = animation[_spriteIndex];
-				_remaining = tileSet.speed;
+				_remaining = isGlitched ? tileSet.destroyAnimSpeed : tileSet.speed;
 			}
 
 			yield return null;

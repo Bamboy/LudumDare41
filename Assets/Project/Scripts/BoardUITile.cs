@@ -58,7 +58,7 @@ public class BoardUITile : MonoBehaviour
 		_initalized = true;
 		this.token = token;
 
-		collision.enabled = glitched;
+		collision.enabled = !glitched;
 		render.SetTiles( GameManager.singleton.tileSprites[this.token], glitched, duration );
 
 		Destroy( this.gameObject, duration );
