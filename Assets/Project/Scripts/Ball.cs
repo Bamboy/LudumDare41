@@ -12,8 +12,12 @@ public class Ball : MonoBehaviour
 			targetSpeed = value;
 		}
 	}
+
+	public AudioClip paddleImpact;
+	public AudioClip wallImpact;
+	public AudioClip blockImpact;
+
 	public bool customPhysics = false;
-	//public float 
 
 	public float targetSpeed = 2f;
 
@@ -25,11 +29,12 @@ public class Ball : MonoBehaviour
 
 	[SerializeField]
 	private float _collisionSkin = -0.02f;
-
+	private AudioSource player;
 	void Start()
 	{
 		col = GetComponent<CircleCollider2D>();
 		rbody = GetComponent<Rigidbody2D>();
+		player = GetComponent<AudioSource>();
 		velocity = (Vector2.right + Vector2.down) * targetSpeed;
 
 		Physics2D.showColliderAABB = true;
@@ -44,11 +49,20 @@ public class Ball : MonoBehaviour
 		BoardUITile tile = impact.gameObject.GetComponent<BoardUITile>();
 		if( tile != null && tile.owner == null )
 		{
-			//tile.Vaporize();
-
+			player.PlayOneShot( blockImpact );
 			GameManager.singleton.board[tile.x,tile.y] = 0; //This should trigger the vaporize glitch effect
-
+			return;
 		}
+
+		Paddle pad = impact.gameObject.GetComponent<Paddle>();
+		if( pad != null )
+		{
+			player.PlayOneShot( paddleImpact );
+			return;
+		}
+
+		player.PlayOneShot( wallImpact );
+
 	}
 
 	void FixedUpdate()
@@ -125,5 +139,6 @@ public class Ball : MonoBehaviour
 		pos = newPos;
 		transform.position = new Vector3( newPos.x, newPos.y, 0f );
 	}
+
 
 }

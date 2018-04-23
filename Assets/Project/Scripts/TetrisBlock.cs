@@ -35,6 +35,15 @@ public class TetrisBlock : MonoBehaviour
 
 	public List<BoardUITile> tiles;
 
+	private AudioSource player;
+	public AudioClip blockRotate;
+	public AudioClip blockMove;
+	public AudioClip blockPlace;
+	void Start()
+	{
+		player = GetComponent<AudioSource>();
+	}
+
 	public void Initalize( Block template, int rotation = 0 )
 	{
 		active = true;
@@ -96,6 +105,8 @@ public class TetrisBlock : MonoBehaviour
 			}
 		}
 
+		player.PlayOneShot( blockPlace );
+
 		foreach (BoardUITile tile in tiles) 
 		{
 			Destroy( tile.gameObject );
@@ -146,13 +157,6 @@ public class TetrisBlock : MonoBehaviour
 						return false;
 					}
 				}
-
-				/*
-				tiles[i].transform.localPosition = new Vector3( 
-					x - template.rotations[newRot].pivot.x, 
-					y - template.rotations[newRot].pivot.y, 0f );
-
-				i++; */
 			}
 		}
 
@@ -174,8 +178,9 @@ public class TetrisBlock : MonoBehaviour
 				i++;
 			}
 		}
-
+			
 		rotation = newRot;
+		player.PlayOneShot( blockRotate );
 
 		return true;
 	}
@@ -264,6 +269,7 @@ public class TetrisBlock : MonoBehaviour
 		if( moveDown )
 		{
 			position += new Vector2Int(0, -1);
+			player.PlayOneShot( blockMove );
 		}
 		else
 		{
