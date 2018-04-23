@@ -44,10 +44,11 @@ public class BoardUI : MonoBehaviour
 		tracking = data;
 
 		//Update the specified BoardUITile when the specified board tile has changed.
+		/*
 		tracking.onResolveDirty += delegate(int tx, int ty) 
 		{
-			this.tiles[tx, ty].Set( data[tx, ty] );
-		};
+			//this.tiles[tx, ty].Set( data[tx, ty] );
+		}; */
 
 		//Whenever the board we are tracking changes, have it update this ui
 		data.onAfterChanged += delegate() 
@@ -71,9 +72,17 @@ public class BoardUI : MonoBehaviour
 		}
 
 	}
+
+	private int previousToken = 0;
 	public void UpdateUI(int x, int y)
 	{
-		this.tiles[x, y].Set( tracking[x, y] );
+
+		if( tracking[x,y] == 0 && tiles[x, y].token != 0 )
+		{
+			this.tiles[x, y].Vaporize();
+		}
+		else
+			this.tiles[x, y].Set( tracking[x, y] );
 	}
 
 

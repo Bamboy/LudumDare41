@@ -5,31 +5,84 @@ using UnityEngine;
 [RequireComponent(typeof(CircleCollider2D))]
 public class Ball : MonoBehaviour 
 {
-	public float speed = 0.5f;
+	public float speed
+	{
+		get{ return rbody.velocity.magnitude; }
+		set{
+			targetSpeed = value;
+		}
+	}
 
-	//public float 
+	public AudioClip paddleImpact;
+	public AudioClip wallImpact;
+	public AudioClip blockImpact;
+
+	public bool customPhysics = false;
+
+	public float targetSpeed = 2f;
 
 	[SerializeField]
 	private Vector2 velocity;
 
+	private Rigidbody2D rbody;
 	private CircleCollider2D col;
 
 	[SerializeField]
 	private float _collisionSkin = -0.02f;
-
+	private AudioSource player;
 	void Start()
 	{
 		col = GetComponent<CircleCollider2D>();
-
-		velocity = (Vector2.right + Vector2.down) * speed;
+		rbody = GetComponent<Rigidbody2D>();
+		player = GetComponent<AudioSource>();
+		velocity = (Vector2.right + Vector2.down) * targetSpeed;
 
 		Physics2D.showColliderAABB = true;
 
+		rbody.AddForce(velocity, ForceMode2D.Impulse);
+
 	}
+
+
+	void OnCollisionEnter2D( Collision2D impact )
+	{
+		BoardUITile tile = impact.gameObject.GetComponent<BoardUITile>();
+		if( tile != null && tile.owner == null )
+		{
+			player.PlayOneShot( blockImpact );
+			GameManager.singleton.board[tile.x,tile.y] = 0; //This should trigger the vaporize glitch effect
+			return;
+		}
+
+		Paddle pad = impact.gameObject.GetComponent<Paddle>();
+		if( pad != null )
+		{
+			player.PlayOneShot( paddleImpact );
+			return;
+		}
+
+		player.PlayOneShot( wallImpact );
+
+	}
+
 	void FixedUpdate()
 	{
+		if( customPhysics)
+		{
+			CustomPhysics();
+		}
+		else
+		{
 
-		//Vector2 orign;
+			if( rbody.velocity.magnitude < targetSpeed )
+			{
+				rbody.velocity = rbody.velocity.normalized * targetSpeed;
+			}
+
+		}
+	}
+	void CustomPhysics()
+	{
 
 
 
@@ -46,7 +99,7 @@ public class Ball : MonoBehaviour
 
 		Vector2 movement = newPos - pos;
 
-	
+
 		RaycastHit2D[] data = Physics2D.CircleCastAll( pos, col.radius, movement, movement.magnitude );
 
 		DebugExtension.DebugArrow(VectorExtras.V3FromV2(pos), VectorExtras.V3FromV2(movement), Color.green);

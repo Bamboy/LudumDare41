@@ -15,4 +15,5 @@ MonoBehaviour:
   speed: 0
   sprites:
   - {fileID: 21300000, guid: 978bc9953b6df0b488527d6a69c33229, type: 3}
-  destroySprites: []
+  destroySprites:
+  - {fileID: 21300000, guid: 978bc9953b6df0b488527d6a69c33229, type: 3}
