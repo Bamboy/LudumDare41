@@ -11,8 +11,6 @@ public class BoardUITile : MonoBehaviour
 	public BoxCollider2D collision;
 	private TileAnimator render;
 
-	public TextMeshPro text;
-
 	public TetrisBlock owner;
 
 	public int x;
@@ -39,14 +37,9 @@ public class BoardUITile : MonoBehaviour
 		_initalized = true;
 		this.x = x;
 		this.y = y;
-
-		text.text = string.Format("[{0}, {1}]", x, y);
 	}
 	public void Initalize(int x, int y, TetrisBlock owner)
 	{
-		if( text != null )
-			Destroy( text.gameObject );
-
 		_initalized = true;
 
 		this.token = owner.template.token;
@@ -57,19 +50,20 @@ public class BoardUITile : MonoBehaviour
 		render.SetTiles( GameManager.singleton.tileSprites[this.token] );
 	}
 
-	public void Vaporize()
+	/// <summary>
+	/// Initalize a glitched block which is destroyed after duration
+	/// </summary>
+	public void Initalize( int token, bool glitched, float duration )
 	{
-		if( _initalized == false )
-			return;
+		_initalized = true;
+		this.token = token;
 
-		if( token < 0 )
-			token = 0;
+		collision.enabled = glitched;
+		render.SetTiles( GameManager.singleton.tileSprites[this.token], glitched, duration );
 
-		collision.enabled = false;
-		render.SetTiles( GameManager.singleton.tileSprites[token], true, GameManager.singleton.tileGlitchTime );
-
-		//StartCoroutine( GlitchThenRemove() );
+		Destroy( this.gameObject, duration );
 	}
+
 
 	#region Movement
 	public bool CanMoveDown()
@@ -174,7 +168,7 @@ public class BoardUITile : MonoBehaviour
 
 	#endregion
 
-	public void Set( int token, bool forceCollisionEnabled = false )
+	public void Set( int token )
 	{
 		if( token < 0 )
 			token = 0;
@@ -182,12 +176,10 @@ public class BoardUITile : MonoBehaviour
 		if( this.token == token )
 			return;
 
-		if( forceCollisionEnabled )
-			collision.enabled = true;
-		else
-			collision.enabled = token != 0;
+		collision.enabled = token != 0;
 
 		render.SetTiles( GameManager.singleton.tileSprites[token] );
+
 		this.token = token;
 	}
 }

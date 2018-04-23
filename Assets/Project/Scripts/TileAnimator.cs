@@ -18,36 +18,28 @@ public class TileAnimator : MonoBehaviour
 	private bool isGlitched = false;
 	public void SetTiles( TileAnimationSet tiles, bool glitched = false, float duration = Mathf.Infinity )
 	{
-		if( tiles == null )
+		if( tiles == this.tileSet ) //Skip if we didnt change anything
 			return;
-		/*
-		if( tiles.name == "Empty" )
+		
+		if( tiles == null || tiles == GameManager.singleton.tileSprites[0] )
 		{
+			tileSet = GameManager.singleton.tileSprites[0]; //Default to "empty" 
+			_renderer.sprite = tiles.sprites[0];
 			_renderer.enabled = false;
-			Debug.Log(_renderer.sprite.name, this.gameObject);
-
-			isGlitched = false;
+			StopCoroutine( TileLoop(tileSet.sprites) );
 			return;
-		} */
-
-		if( tiles == this.tileSet && isGlitched )
-			return;
-
-
+		}
+			
 		_renderer.enabled = true;
+		StopCoroutine( TileLoop(null) );
 
-		if( glitched != isGlitched || this.tileSet != tiles )
+		if( glitched )
 		{
-			StopCoroutine( TileLoop(null) );
-
-			if( glitched )
-			{
-				StartCoroutine( TileLoop(tiles.destroySprites, duration) );
-			}
-			else
-			{
-				StartCoroutine( TileLoop(tiles.sprites, duration ) );
-			}
+			StartCoroutine( TileLoop(tiles.destroySprites, duration) );
+		}
+		else
+		{
+			StartCoroutine( TileLoop(tiles.sprites, duration ) );
 		}
 
 		isGlitched = glitched;
@@ -57,20 +49,13 @@ public class TileAnimator : MonoBehaviour
 		_remaining = 0f;
 	}
 
-	void OnEnable()
-	{
-		StartCoroutine( TileLoop(tileSet.sprites) );
-	}
-	void OnDisable()
-	{
-		StopCoroutine( TileLoop(null) );
-	}
-
+	private List<Sprite> animation;
 	int _spriteIndex;
 	float _remaining;
 	float disableTime;
 	IEnumerator TileLoop( List<Sprite> sprites, float duration = Mathf.Infinity )
 	{
+		animation = sprites;
 		_renderer.enabled = true;
 		disableTime = Time.time + duration;
 		_remaining = tileSet.speed;
@@ -82,7 +67,7 @@ public class TileAnimator : MonoBehaviour
 				break;
 			}
 
-			if( sprites.Count == 1 )
+			if( animation.Count == 1 )
 			{
 				yield return null;
 				continue;
@@ -91,8 +76,8 @@ public class TileAnimator : MonoBehaviour
 			_remaining -= Time.deltaTime;
 			if( _remaining <= 0f )
 			{
-				_spriteIndex = (int)Mathf.Repeat((float)_spriteIndex + 1f, (float)sprites.Count);
-				_renderer.sprite = sprites[_spriteIndex];
+				_spriteIndex = (int)Mathf.Repeat((float)_spriteIndex + 1f, (float)animation.Count);
+				_renderer.sprite = animation[_spriteIndex];
 				_remaining = tileSet.speed;
 			}
 

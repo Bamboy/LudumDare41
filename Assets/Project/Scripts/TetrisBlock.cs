@@ -21,6 +21,10 @@ public class TetrisBlock : MonoBehaviour
 	public float blockPlaceVectorgridForce = 1f;
 	public float blockPlaceVectorgridRadius = 0.5f;
 
+	public float rowClearVectorgridForce = 3f;
+	public float rowClearVectorgridRadius = 3f;
+	public Color rowClearVectorgridColor = Color.white;
+
 	public bool active{ get; private set; }
 
 	/// Position of our pivot on the game board.
@@ -92,25 +96,63 @@ public class TetrisBlock : MonoBehaviour
 	{
 		if( active == false )
 			return;
-		
+
+		Board board = GameManager.singleton.board;
+
 		Color forceColor = tiles[0].GetComponent<TileAnimator>().tileSet.blockColor;
 		foreach (BoardUITile tile in tiles) 
 		{
 			Vector2Int tilePos = tile.position + Vector2Int.up;
-			if( GameManager.singleton.board.IsInBounds( tilePos ) )
+			if( board.IsInBounds( tilePos ) )
 			{
 				GameManager.singleton.vectorMesh.AddGridForce(tile.transform.position, blockPlaceVectorgridForce, blockPlaceVectorgridRadius, forceColor, true);
 
-				GameManager.singleton.board[tilePos.x, tilePos.y] = tile.token;
+				board[tilePos.x, tilePos.y] = tile.token;
 			}
 		}
 
-		player.PlayOneShot( blockPlace );
+		//Check for row clears!
+		List<int> clearedRows = new List<int>();
+		for (int y = 0; y < board.tiles.GetLength(1); y++) //Go by height first, then by width
+		{
+			bool doClearRow = true;
+			for (int x = 0; x < board.tiles.GetLength(0); x++) 
+			{
+				if( board[x,y] == 0 ) //Is this space empty?
+				{
+					doClearRow = false;
+					break;
+				}
+			}
+
+			if( doClearRow )
+				clearedRows.Add( y );
+		}
+
+		if( clearedRows.Count == 0 )
+		{
+			player.PlayOneShot( blockPlace );
+		}
+		else
+		{
+			foreach (int row in clearedRows) 
+			{
+				for (int x = 0; x < board.tiles.GetLength(0); x++)
+				{
+					GameManager.singleton.vectorMesh.AddGridForce(new Vector3(x, row, 0f), rowClearVectorgridForce, rowClearVectorgridRadius, rowClearVectorgridColor, true);
+
+					board[x,row] = 0;
+				}
+			}
+
+			board.DropEmptyRows();
+		}
 
 		foreach (BoardUITile tile in tiles) 
 		{
 			Destroy( tile.gameObject );
 		}
+
 		GameManager.singleton.board.ResolveDirty();
 
 		tiles = new List<BoardUITile>();

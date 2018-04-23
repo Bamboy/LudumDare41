@@ -50,16 +50,25 @@ public class Ball : MonoBehaviour
 		if( tile != null && tile.owner == null )
 		{
 			player.PlayOneShot( blockImpact );
-			GameManager.singleton.board[tile.x,tile.y] = 0; //This should trigger the vaporize glitch effect
+			GameManager.singleton.board[tile.x,tile.y] = 0;
+
+			GameObject glitchedTile = Instantiate<GameObject>( GameManager.singleton.boardRendering.tilePrefab, tile.transform.position, Quaternion.identity, tile.transform );
+
+			BoardUITile visual = glitchedTile.GetComponent<BoardUITile>();
+			visual.Initalize( tile.token, true, GameManager.singleton.tileGlitchTime );
+
 			return;
 		}
 
+
+
+		/*
 		Paddle pad = impact.gameObject.GetComponent<Paddle>();
 		if( pad != null )
 		{
 			player.PlayOneShot( paddleImpact );
 			return;
-		}
+		} */
 
 		player.PlayOneShot( wallImpact );
 

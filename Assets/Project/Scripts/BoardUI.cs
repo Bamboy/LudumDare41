@@ -73,16 +73,10 @@ public class BoardUI : MonoBehaviour
 
 	}
 
-	private int previousToken = 0;
+
 	public void UpdateUI(int x, int y)
 	{
-
-		if( tracking[x,y] == 0 && tiles[x, y].token != 0 )
-		{
-			this.tiles[x, y].Vaporize();
-		}
-		else
-			this.tiles[x, y].Set( tracking[x, y] );
+		this.tiles[x, y].Set( tracking[x, y] );
 	}
 
 

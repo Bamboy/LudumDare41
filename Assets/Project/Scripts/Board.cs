@@ -32,6 +32,9 @@ public class Board
 
 	public Vector2Int blockSpawn;
 
+	private int _highestPoint;
+	public int highestPoint{ get{ return _highestPoint; } }
+
 	/// Create a new board with the given size.
 	public Board( int width, int height, int fillTokens = 0 )
 	{
@@ -110,6 +113,7 @@ public class Board
 	{
 		if( isDirty )
 		{
+			
 			if( onResolveDirty != null )
 			{
 				for (int x = 0; x < width; x++) 
@@ -124,12 +128,108 @@ public class Board
 					}
 				}
 			}
-
+				
 			if( onAfterChanged != null )
 				onAfterChanged();
 
 			ClearDirty();
 		}
+	}
+	public int GetHighestPoint()
+	{
+		int highest = 0; 
+		for (int y = 0; y < height; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				if( tiles[x,y] != 0 )
+				{
+					highest = y;
+					break;
+				}
+			}
+		}
+		_highestPoint = highest;
+		return highest;
+	}
+
+	public void DropEmptyRows()
+	{
+		int[,] newTiles = new int[width, height];
+
+
+		bool[] emptyRows = new bool[height];
+		for (int y = 0; y < height; y++) 
+		{
+			emptyRows[y] = IsRowEmpty(y);
+		}
+			
+		int validRowIndex = 0;
+		for (int y = 0; y < height; y++) 
+		{
+			if( emptyRows[y] == false )
+			{
+				for (int x = 0; x < width; x++) 
+				{
+
+					newTiles[x, validRowIndex] = tiles[x, y];
+
+				}
+
+				validRowIndex++;
+			}
+
+		}
+
+		tiles = newTiles;
+		DirtyAll();
+
+		/*
+
+		int highest = GetHighestPoint();
+
+		int breakout = 300;
+
+		for (int y = 0; y < highest; y++) 
+		{
+			breakout--;
+
+			if( breakout <= 0 )
+			{
+				Debug.LogError("Infinite loop in dropemptyrows");
+				break;
+			}
+
+			if( IsRowEmpty( y ) )
+			{
+				ShiftDownward( y );
+				y -= 1;
+			}
+		}*/
+	}
+
+	bool IsRowEmpty( int y )
+	{
+		for (int x = 0; x < width; x++) 
+		{
+			if( tiles[x,y] != 0 )
+				return false;
+		}
+		return true;
+	}
+
+	void ShiftDownward( int aboveRow )
+	{
+		Board copy = Copy( this );
+		for (int y = aboveRow; y < height - 1; y++) 
+		{
+			for (int x = 0; x < width; x++) 
+			{
+				copy[x,y] = tiles[x, y + 1];
+			}
+		}
+		this.tiles = copy.tiles;
+		DirtyAll();
 	}
 
 	/// Action to take when we go through dirty tiles.
