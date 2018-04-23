@@ -141,7 +141,7 @@ public class BoardUITile : MonoBehaviour
 		return move;
 	}
 
-	public void Set( int token )
+	public void Set( int token, bool forceCollisionEnabled = false )
 	{
 		if( token < 0 )
 			token = 0;
@@ -151,7 +151,10 @@ public class BoardUITile : MonoBehaviour
 			return;
 		}
 
-		collision.enabled = token != 0;
+		if( forceCollisionEnabled )
+			collision.enabled = true;
+		else
+			collision.enabled = token != 0;
 
 		render.SetTiles( GameManager.singleton.tileSprites[token] );
 		this.token = token;

@@ -61,6 +61,9 @@ public class TetrisBlock : MonoBehaviour
 					y - template.rotations[rotation].pivot.y, 0f );
 				BoardUITile t = obj.GetComponent<BoardUITile>();
 				t.Initalize(x, y - 1, this);
+
+
+
 				//t.token = template.token;
 				tiles.Add( t );
 			}

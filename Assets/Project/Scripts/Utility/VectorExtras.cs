@@ -161,7 +161,7 @@ public class VectorExtras
 	}
 	
 	///Switch between types of vectors.
-	public static Vector3 V3FromV2( Vector2 V2, float val )
+	public static Vector3 V3FromV2( Vector2 V2, float val = 0f )
 	{
 		return new Vector3( V2.x, V2.y, val );
 	}
