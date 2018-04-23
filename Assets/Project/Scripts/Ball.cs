@@ -5,13 +5,22 @@ using UnityEngine;
 [RequireComponent(typeof(CircleCollider2D))]
 public class Ball : MonoBehaviour 
 {
-	public float speed = 0.5f;
-
+	public float speed
+	{
+		get{ return rbody.velocity.magnitude; }
+		set{
+			targetSpeed = value;
+		}
+	}
+	public bool customPhysics = false;
 	//public float 
+
+	public float targetSpeed = 2f;
 
 	[SerializeField]
 	private Vector2 velocity;
 
+	private Rigidbody2D rbody;
 	private CircleCollider2D col;
 
 	[SerializeField]
@@ -20,16 +29,46 @@ public class Ball : MonoBehaviour
 	void Start()
 	{
 		col = GetComponent<CircleCollider2D>();
-
-		velocity = (Vector2.right + Vector2.down) * speed;
+		rbody = GetComponent<Rigidbody2D>();
+		velocity = (Vector2.right + Vector2.down) * targetSpeed;
 
 		Physics2D.showColliderAABB = true;
 
+		rbody.AddForce(velocity, ForceMode2D.Impulse);
+
 	}
+
+
+	void OnCollisionEnter2D( Collision2D impact )
+	{
+		BoardUITile tile = impact.gameObject.GetComponent<BoardUITile>();
+		if( tile != null && tile.owner == null )
+		{
+			//tile.Vaporize();
+
+			GameManager.singleton.board[tile.x,tile.y] = 0; //This should trigger the vaporize glitch effect
+
+		}
+	}
+
 	void FixedUpdate()
 	{
+		if( customPhysics)
+		{
+			CustomPhysics();
+		}
+		else
+		{
 
-		//Vector2 orign;
+			if( rbody.velocity.magnitude < targetSpeed )
+			{
+				rbody.velocity = rbody.velocity.normalized * targetSpeed;
+			}
+
+		}
+	}
+	void CustomPhysics()
+	{
 
 
 
@@ -46,7 +85,7 @@ public class Ball : MonoBehaviour
 
 		Vector2 movement = newPos - pos;
 
-	
+
 		RaycastHit2D[] data = Physics2D.CircleCastAll( pos, col.radius, movement, movement.magnitude );
 
 		DebugExtension.DebugArrow(VectorExtras.V3FromV2(pos), VectorExtras.V3FromV2(movement), Color.green);
@@ -86,6 +125,5 @@ public class Ball : MonoBehaviour
 		pos = newPos;
 		transform.position = new Vector3( newPos.x, newPos.y, 0f );
 	}
-
 
 }

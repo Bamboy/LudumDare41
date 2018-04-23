@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 	private static GameManager _instance;
 	public static GameManager singleton{ get{ return _instance; } }
 
+	public float tileGlitchTime = 0.5f;
 
 	public Queue<Block> upcomingBlocks;
 
