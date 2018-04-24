@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour {
+public class GameManager : MonoBehaviour 
+{
     private static GameManager _instance;
     public static GameManager singleton { get { return _instance; } }
 
@@ -27,6 +28,19 @@ public class GameManager : MonoBehaviour {
     public VectorGrid vectorMesh;
 
     public AudioSource lowMusic, highMusic;
+
+	private bool _gameOver = false;
+	public bool isGameOver
+	{
+		get{ return _gameOver; }
+		set{ 
+			_gameOver = value;
+
+			GameOverUI.singleton.UpdateUI();
+
+			Time.timeScale = value ? 0f : 1f;
+		}
+	}
 
     #region Score
     private int _score;
@@ -124,8 +138,6 @@ public class GameManager : MonoBehaviour {
     void Start()
     {
         Block.BuildBlocks();
-        upcomingBlocks = new Queue<Block>();
-
         board = new Board( boardSizeX, boardSizeY, 0 );
 
         boardRendering.Initalize( board );
@@ -138,8 +150,11 @@ public class GameManager : MonoBehaviour {
         upcomingBlocks.Enqueue(
             Block.blocks[Random.Range(0, Block.blocks.Count)]
         );
+		upcomingBlocks.Enqueue(
+			Block.blocks[Random.Range(0, Block.blocks.Count)]
+		);
 
-        fallingBlock.Initalize( Block.blocks[1] );
+		fallingBlock.Initalize( Block.blocks[Random.Range(0, Block.blocks.Count)] );
 
         StartCoroutine( GameUpdater() );
     }
@@ -162,24 +177,23 @@ public class GameManager : MonoBehaviour {
 
     void GameUpdate()
     {
-        if ( fallingBlock.active == false ) {
+		if( isGameOver )
+			return;
+		
+		if ( fallingBlock.active == false ) 
+		{
             fallingBlock.Initalize( upcomingBlocks.Dequeue() );
 
             upcomingBlocks.Enqueue(
                 Block.blocks[Random.Range(0, Block.blocks.Count)]
             );
-        } else
-        { fallingBlock.OnGameUpdate(); }
 
-
-        /*
-        for (int x = 0; x < board.width; x++)
-        {
-        	for (int y = 0; y < board.height; y++)
-        	{
-        		//board[x,y] = VectorExtras.SplitChance() ? 0 : 1;
-        	}
-        } */
+			UpcomingBlocks.singleton.UpdateUI();
+        } 
+		else
+        { 
+			fallingBlock.OnGameUpdate(); 
+		}
     }
     public void ForceGameUpdate()
     {

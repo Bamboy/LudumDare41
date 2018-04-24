@@ -9,6 +9,7 @@ public class TileAnimationSet : ScriptableObject
 	public Color blockColor = Color.white;
 	public float speed = 0.2f;
 
+	public Sprite uiIcon;
 
 	public List<Sprite> sprites;
 

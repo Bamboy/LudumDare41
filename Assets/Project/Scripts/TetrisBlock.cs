@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public class TetrisBlock : MonoBehaviour {
+public class TetrisBlock : MonoBehaviour 
+{
     private Block _template;
     public Block template { get { return _template; } private set { _template = value; } }
 
@@ -97,12 +98,20 @@ public class TetrisBlock : MonoBehaviour {
         if ( active == false )
         { return; }
 
+		if( position.y == GameManager.singleton.board.blockSpawn.y )
+		{
+			GameManager.singleton.isGameOver = true;
+			active = false;
+			return;
+		}
+
         Board board = GameManager.singleton.board;
 
         Color forceColor = tiles[0].GetComponent<TileAnimator>().tileSet.blockColor;
         foreach (BoardUITile tile in tiles) {
             Vector2Int tilePos = tile.position + Vector2Int.up;
-            if ( board.IsInBounds( tilePos ) ) {
+            if ( board.IsInBounds( tilePos ) ) 
+			{
                 GameManager.singleton.vectorMesh.AddGridForce(tile.transform.position, blockPlaceVectorgridForce,
                         blockPlaceVectorgridRadius, forceColor, true);
 
@@ -125,11 +134,15 @@ public class TetrisBlock : MonoBehaviour {
             { clearedRows.Add( y ); }
         }
 
-        if ( clearedRows.Count == 0 ) {
+        if ( clearedRows.Count == 0 ) 
+		{
             player.PlayOneShot( blockPlace );
-        } else {
+        } 
+		else 
+		{
             GameManager.singleton.ClearedRows( clearedRows.Count );
-            foreach (int row in clearedRows) {
+            foreach (int row in clearedRows) 
+			{
                 for (int x = 0; x < board.tiles.GetLength(0); x++) {
                     GameManager.singleton.vectorMesh.AddGridForce(new Vector3(x, row, 0f), rowClearVectorgridForce * clearedRows.Count,
                             rowClearVectorgridRadius * clearedRows.Count, rowClearVectorgridColor, true);

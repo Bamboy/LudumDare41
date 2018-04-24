@@ -182,4 +182,32 @@ public class BoardUITile : MonoBehaviour
 
 		this.token = token;
 	}
+
+	public void DelayCollisionWithBall()
+	{
+		StopCoroutine( DelayBallCollision() );
+		StartCoroutine( DelayBallCollision() );
+	}
+
+	IEnumerator DelayBallCollision()
+	{
+		Physics2D.IgnoreCollision(collision, Ball.singleton.col, true);
+		while( true )
+		{
+			Bounds area = collision.bounds;
+			Vector2 cornA = new Vector2( area.min.x, area.min.y );
+			Vector2 cornB = new Vector2( area.max.x, area.max.y );
+
+			List<Collider2D> contents = new List<Collider2D>( Physics2D.OverlapAreaAll(cornA, cornB) );
+			if( contents.Contains( Ball.singleton.col ) ) //Wait until the ball leaves our area before enabling collision.
+			{
+				yield return null;
+			}
+			else
+			{
+				Physics2D.IgnoreCollision(collision, Ball.singleton.col, false);
+				break;
+			}
+		}
+	}
 }

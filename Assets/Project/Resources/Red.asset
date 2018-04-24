@@ -13,12 +13,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockColor: {r: 1, g: 0, b: 0, a: 1}
   speed: 0.1
+  uiIcon: {fileID: 21300000, guid: 566f0c86db36e1f4a81dc20f8ac4d628, type: 3}
   sprites:
   - {fileID: 21300020, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
   - {fileID: 21300022, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
   - {fileID: 21300024, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
   - {fileID: 21300026, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
   - {fileID: 21300028, guid: 55153b2b4b03de742828a9792f3d76b7, type: 3}
+  destroyAnimSpeed: 0.05
   destroySprites:
   - {fileID: 21300046, guid: 32585b5b72d38934999b3ab717c58510, type: 3}
   - {fileID: 21300044, guid: 32585b5b72d38934999b3ab717c58510, type: 3}
