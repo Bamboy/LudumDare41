@@ -168,7 +168,7 @@ public class Ball : MonoBehaviour
 		GameManager.singleton.vectorMesh.AddGridForce(
 			new Vector3(transform.position.x, transform.position.y, 5f), 
 			0.1f,
-			0.8f, Color.clear, false);
+			2f, Color.clear, false);
 
 
     }
