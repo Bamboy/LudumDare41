@@ -112,7 +112,7 @@ public class TetrisBlock : MonoBehaviour
             Vector2Int tilePos = tile.position + Vector2Int.up;
             if ( board.IsInBounds( tilePos ) ) 
 			{
-                GameManager.singleton.vectorMesh.AddGridForce(tile.transform.position, blockPlaceVectorgridForce,
+				GameManager.singleton.vectorMesh.AddGridForce(new Vector3(tile.transform.position.x, tile.transform.position.y, 5f), blockPlaceVectorgridForce,
                         blockPlaceVectorgridRadius, forceColor, true);
 
                 board[tilePos.x, tilePos.y] = tile.token;
@@ -144,7 +144,7 @@ public class TetrisBlock : MonoBehaviour
             foreach (int row in clearedRows) 
 			{
                 for (int x = 0; x < board.tiles.GetLength(0); x++) {
-                    GameManager.singleton.vectorMesh.AddGridForce(new Vector3(x, row, 0f), rowClearVectorgridForce * clearedRows.Count,
+                    GameManager.singleton.vectorMesh.AddGridForce(new Vector3(x, row, 5f), rowClearVectorgridForce * clearedRows.Count,
                             rowClearVectorgridRadius * clearedRows.Count, rowClearVectorgridColor, true);
 
                     board[x, row] = 0;
@@ -234,10 +234,13 @@ public class TetrisBlock : MonoBehaviour
         if ( active == false )
         { return; }
 
-        if ( Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow) ) {
-            MoveLeft();
-        } else if ( Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow) ) {
-            MoveRight();
+        if ( Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow) ) 
+		{
+			MoveLeft();
+        } 
+		else if ( Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow) ) 
+		{
+			MoveRight();
         }
 
         if ( Input.GetKeyDown(KeyCode.Q) ) {
@@ -257,7 +260,7 @@ public class TetrisBlock : MonoBehaviour
 
     void MoveLeft()
     {
-        if ( active == false )
+		if ( active == false || Time.timeScale <= 0.01f )
         { return; }
 
         bool moveLeft = true;
@@ -267,16 +270,16 @@ public class TetrisBlock : MonoBehaviour
                 break;
             }
         }
-        if ( moveLeft ) {
-            position += new Vector2Int(-1, 0);
+        if ( moveLeft ) 
+		{
+			GameManager.singleton.ResetTimer();
+			position += new Vector2Int(-1, 0);
             player.PlayOneShot( blockMove );
         }
-
-        //GameManager.singleton.ForceGameUpdate();
     }
     void MoveRight()
     {
-        if ( active == false )
+		if ( active == false || Time.timeScale <= 0.01f )
         { return; }
 
         bool moveRight = true;
@@ -286,12 +289,12 @@ public class TetrisBlock : MonoBehaviour
                 break;
             }
         }
-        if ( moveRight ) {
+        if ( moveRight ) 
+		{
+			GameManager.singleton.ResetTimer();
             position += new Vector2Int(1, 0);
             player.PlayOneShot( blockMove );
         }
-
-        //GameManager.singleton.ForceGameUpdate();
     }
     void MoveDown()
     {

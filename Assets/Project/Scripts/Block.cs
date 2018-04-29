@@ -33,40 +33,26 @@ public struct Block
 		BlockOrientation down;
 		BlockOrientation right;
 
-		/*
-			x x
-			x x
-		*/
-		Block square = new Block();
-		square.token = 1;
+
+		Block O = new Block();
+		O.token = 4;
 		up = new BlockOrientation( 2, 2, new Vector2Int(0,0), true );
-		square.rotations = new List<BlockOrientation>(){ up, up, up, up };//Only one rotation for the square
-		blocks.Add( square );
+		O.rotations = new List<BlockOrientation>(){ up, up, up, up };//Only one rotation for the square
+		blocks.Add( O );
 
-		/*
-			x 
-			x
-			x
-			x
-		*/
 
-		Block b1x4 = new Block();
-		b1x4.token = 2;
+		Block I = new Block();
+		I.token = 1;
 		up = new BlockOrientation( 1, 4, new Vector2Int(0,0), true );
 		left = new BlockOrientation( 4, 1, new Vector2Int(0,0), true );
 		down = new BlockOrientation( 1, 4, new Vector2Int(0,3), true );
 		right = new BlockOrientation( 4, 1, new Vector2Int(3,0), true );
-		b1x4.rotations = new List<BlockOrientation>(){ up, left, down, right };
-		blocks.Add( b1x4 );
+		I.rotations = new List<BlockOrientation>(){ up, left, down, right };
+		blocks.Add( I );
 
-		/*
-			x
-			x
-			x x
-		*/
-		#region L1
-		Block bL1 = new Block();
-		bL1.token = 3;
+		#region L
+		Block L = new Block();
+		L.token = 3;
 		up = new BlockOrientation( 2, 3, new Vector2Int(0,0), true );
 		up.tiles = new bool[,]
 		{
@@ -93,13 +79,13 @@ public struct Block
 			{ T, F },
 			{ T, T }
 		};
-		bL1.rotations = new List<BlockOrientation>(){ up, left, down, right };
-		blocks.Add( bL1 );
+		L.rotations = new List<BlockOrientation>(){ up, left, down, right };
+		blocks.Add( L );
 		#endregion
 
-		#region L2
-		Block bL2 = new Block();
-		bL2.token = 4;
+		#region J
+		Block J = new Block();
+		J.token = 2;
 		up = new BlockOrientation( 2, 3, new Vector2Int(1,0), true );
 		up.tiles = new bool[,]
 		{
@@ -126,13 +112,13 @@ public struct Block
 			{ F, T },
 			{ T, T }
 		};
-		bL2.rotations = new List<BlockOrientation>(){ up, left, down, right };
-		blocks.Add( bL2 );
+		J.rotations = new List<BlockOrientation>(){ up, left, down, right };
+		blocks.Add( J );
 		#endregion
 
 		#region T
-		Block bT = new Block();
-		bT.token = 5;
+		Block t = new Block();
+		t.token = 6;
 		up = new BlockOrientation( 3, 2, new Vector2Int(1,0), true );
 		up.tiles = new bool[,]
 		{
@@ -159,13 +145,13 @@ public struct Block
 			{ F, T, F },
 			{ T, T, T }
 		};
-		bT.rotations = new List<BlockOrientation>(){ up, left, down, right };
-		blocks.Add( bT );
+		t.rotations = new List<BlockOrientation>(){ up, left, down, right };
+		blocks.Add( t );
 		#endregion
 
-		#region Squiggle1
-		Block bS1 = new Block();
-		bS1.token = 6;
+		#region S
+		Block S = new Block();
+		S.token = 5;
 		up = new BlockOrientation( 3, 2, new Vector2Int(1,0), true );
 		up.tiles = new bool[,]
 		{
@@ -179,13 +165,13 @@ public struct Block
 			{ F, T, T },
 			{ T, T, F }
 		};
-		bS1.rotations = new List<BlockOrientation>(){ up, left, up, left };
-		blocks.Add( bS1 );
+		S.rotations = new List<BlockOrientation>(){ up, left, up, left };
+		blocks.Add( S );
 		#endregion
 
-		#region Squiggle2
-		Block bS2 = new Block();
-		bS2.token = 7;
+		#region Z
+		Block Z = new Block();
+		Z.token = 7;
 		up = new BlockOrientation( 3, 2, new Vector2Int(1,0), true );
 		up.tiles = new bool[,]
 		{
@@ -199,8 +185,8 @@ public struct Block
 			{ T, T, F },
 			{ F, T, T }
 		};
-		bS2.rotations = new List<BlockOrientation>(){ up, left, up, left };
-		blocks.Add( bS2 );
+		Z.rotations = new List<BlockOrientation>(){ up, left, up, left };
+		blocks.Add( Z );
 		#endregion
 	}
 

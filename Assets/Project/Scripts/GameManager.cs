@@ -27,18 +27,14 @@ public class GameManager : MonoBehaviour
 
     public VectorGrid vectorMesh;
 
-    public AudioSource lowMusic, highMusic;
-
 	private bool _gameOver = false;
 	public bool isGameOver
 	{
 		get{ return _gameOver; }
 		set{ 
 			_gameOver = value;
+			GameOverUI.singleton.SetMenuState( MenuState.GameOver );
 
-			GameOverUI.singleton.UpdateUI();
-
-			Time.timeScale = value ? 0f : 1f;
 		}
 	}
 
@@ -162,6 +158,11 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
+		if( Input.GetKeyDown(KeyCode.Escape) && isGameOver == false )
+		{
+			GameOverUI.singleton.SetMenuState( GameOverUI.singleton.shownMenu == MenuState.None ? MenuState.Pause : MenuState.None );
+		}
+
         if ( Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) )
         { _timeMultiplier = holdDownMultiplier; }
         else if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
@@ -169,10 +170,7 @@ public class GameManager : MonoBehaviour
         else
         { _timeMultiplier = 1f; }
 
-        // Alter the music mix based on the board's highest point
-        float mix = board.highestPoint * 1f / board.height;
-        lowMusic.volume = Mathf.Lerp(lowMusic.volume, Mathf.Sqrt(mix), Time.deltaTime);
-        highMusic.volume = Mathf.Lerp(highMusic.volume, Mathf.Sqrt(1f - mix), Time.deltaTime);
+
     }
 
     void GameUpdate()
@@ -204,6 +202,11 @@ public class GameManager : MonoBehaviour
     {
         board.ResolveDirty();
     }
+
+	public void ResetTimer()
+	{
+		_timeTillUpdate = gameUpdateSpeed;
+	}
 
     private float _timeTillUpdate;
     IEnumerator GameUpdater()

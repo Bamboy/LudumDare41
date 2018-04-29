@@ -83,7 +83,7 @@ public class Ball : MonoBehaviour
     void OnCollisionEnter2D( Collision2D impact )
     {
         BoardUITile tile = impact.gameObject.GetComponent<BoardUITile>();
-        if ( tile != null ) 
+		if ( tile != null ) 
 		{
             wallBounces = 0;
             if ( tile.owner == null ) 
@@ -148,7 +148,7 @@ public class Ball : MonoBehaviour
                 //We hit a falling tetris piece
                 player.PlayOneShot( paddleImpact );
 
-                SetAdding(true);
+				SetAdding( !adding );
             }
         } 
 		else 
@@ -163,6 +163,14 @@ public class Ball : MonoBehaviour
 
             player.PlayOneShot( wallImpact );
         }
+
+
+		GameManager.singleton.vectorMesh.AddGridForce(
+			new Vector3(transform.position.x, transform.position.y, 5f), 
+			0.1f,
+			0.8f, Color.clear, false);
+
+
     }
 
 	private int _resetCounter;

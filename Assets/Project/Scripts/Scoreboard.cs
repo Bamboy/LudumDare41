@@ -9,7 +9,7 @@ public class Scoreboard : MonoBehaviour
 	public static Scoreboard singleton{ get{ return _instance; } }
 
 
-
+	public TextMeshProUGUI highscore;
 	public TextMeshProUGUI score;
 
 	public TextMeshProUGUI multiplier;
@@ -19,8 +19,15 @@ public class Scoreboard : MonoBehaviour
 	public TextMeshProUGUI ballHits;
 	public TextMeshProUGUI rowClears;
 
+	private bool hasHigh = false;
 	public void UpdateUI () 
 	{
+		if( hasHigh )
+		{
+
+			highscore.text = string.Format(" High: {0}", SaveManager.Instance.highscore.ToString("N0"));
+		}
+
 		score.text = string.Format("{0}", GameManager.singleton.score.ToString("N0"));
 
 		if( GameManager.singleton.scoreMultiplier > 1f )
@@ -62,6 +69,10 @@ public class Scoreboard : MonoBehaviour
 		{
 			_instance = this;
 		}
+
+		hasHigh = SaveManager.Instance.hasHighscore;
+		if( !hasHigh )
+			highscore.gameObject.SetActive( false );
 	}
 
 	void Start()

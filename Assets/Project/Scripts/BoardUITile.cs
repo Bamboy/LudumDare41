@@ -81,22 +81,16 @@ public class BoardUITile : MonoBehaviour
 				continue;
 
 			Ball ball = hit.collider.gameObject.GetComponent<Ball>();
-			Paddle paddle = hit.collider.gameObject.GetComponent<Paddle>();
 
 
 			if( ball != null )
 			{
 				Vector2 dirFromCenter = VectorExtras.Direction(VectorExtras.V2FromV3(transform.position - Vector3.down), VectorExtras.V2FromV3(ball.transform.position));
 				ball.GetComponent<Rigidbody2D>().AddForce( dirFromCenter * 10f, ForceMode2D.Impulse );
+				continue;
 			}
 
-			if( ball != null || paddle != null )
-				continue;
-
-
 			BoardUITile otherTile = hit.collider.gameObject.GetComponent<BoardUITile>();
-
-
 
 			if( owner.tiles.Contains( otherTile ) ) //Ignore other tiles that are part of this tetris block
 			{

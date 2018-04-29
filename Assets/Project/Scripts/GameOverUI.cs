@@ -5,32 +5,66 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 
+public enum MenuState
+{
+	None,
+	Pause,
+	GameOver
+}
+
 public class GameOverUI : MonoBehaviour 
 {
 	private static GameOverUI _instance;
 	public static GameOverUI singleton{ get{ return _instance; } }
 
-	public GameObject uiParent;
+	public GameObject shadeBG;
+	public GameObject gameOverParent;
+	public GameObject pauseParent;
+
 	public TextMeshProUGUI score;
 	public AudioClip gameoversound;
 
 	private AudioSource player;
-	public void UpdateUI()
+
+
+	public MenuState shownMenu;
+	public void SetMenuState( MenuState menu )
 	{
-		if( GameManager.singleton.isGameOver == false )
+		if( menu != shownMenu )
 		{
-			uiParent.SetActive( false );
+			Time.timeScale = menu != MenuState.None ? 0f : 1f;
+			shadeBG.SetActive( menu != MenuState.None );
+
+			gameOverParent.SetActive( menu == MenuState.GameOver );
+			pauseParent.SetActive( menu == MenuState.Pause );
+
+			switch( menu )
+			{
+
+			case MenuState.GameOver:
+				GameManager.singleton.FinishCombo();
+				player.PlayOneShot( gameoversound );
+				gameOverParent.SetActive( true );
+				score.text = string.Format("{0}", GameManager.singleton.score.ToString("N0"));
+				SaveManager.Instance.SetHighScore( GameManager.singleton.score );
+				break;
+
+			case MenuState.Pause:
+				ShowPauseUI();
+				break;
+
+			default:
+				break;
+
+			}
+
+			shownMenu = menu;
 		}
-		else
-		{
-			GameManager.singleton.FinishCombo();
+	}
+		
+	void ShowPauseUI()
+	{
 
-			player.PlayOneShot( gameoversound );
-
-			uiParent.SetActive( true );
-
-			score.text = string.Format("{0}", GameManager.singleton.score.ToString("N0"));
-		}
 	}
 
 	void Awake()
@@ -43,7 +77,7 @@ public class GameOverUI : MonoBehaviour
 	{
 		yield return null;
 		player = GetComponent<AudioSource>();
-		UpdateUI();
+		SetMenuState(MenuState.None);
 	}
 
 	public void Btn_Restart()
