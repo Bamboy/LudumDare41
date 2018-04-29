@@ -158,10 +158,19 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-		if( Input.GetKeyDown(KeyCode.Escape) && isGameOver == false )
+		if( isGameOver == false )
 		{
-			GameOverUI.singleton.SetMenuState( GameOverUI.singleton.shownMenu == MenuState.None ? MenuState.Pause : MenuState.None );
+			if( Application.isFocused == false && GameOverUI.singleton.shownMenu == MenuState.None )
+			{
+				GameOverUI.singleton.SetMenuState( MenuState.Pause ); //Pause the game!
+			}
+			else if( Input.GetKeyDown(KeyCode.Escape) )
+			{
+				GameOverUI.singleton.SetMenuState( GameOverUI.singleton.shownMenu == MenuState.None ? MenuState.Pause : MenuState.None );
+			}
 		}
+
+
 
         if ( Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow) )
         { _timeMultiplier = holdDownMultiplier; }
