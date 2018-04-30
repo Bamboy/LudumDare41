@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Sirenix.OdinInspector;
 
-public class TetrisBlock : MonoBehaviour 
-{
+public class TetrisBlock : MonoBehaviour {
     private Block _template;
     public Block template { get { return _template; } private set { _template = value; } }
 
@@ -98,21 +97,20 @@ public class TetrisBlock : MonoBehaviour
         if ( active == false )
         { return; }
 
-		if( position.y == GameManager.singleton.board.blockSpawn.y )
-		{
-			GameManager.singleton.isGameOver = true;
-			active = false;
-			return;
-		}
+        if ( position.y == GameManager.singleton.board.blockSpawn.y ) {
+            GameManager.singleton.isGameOver = true;
+            active = false;
+            return;
+        }
 
         Board board = GameManager.singleton.board;
 
         Color forceColor = tiles[0].GetComponent<TileAnimator>().tileSet.blockColor;
         foreach (BoardUITile tile in tiles) {
             Vector2Int tilePos = tile.position + Vector2Int.up;
-            if ( board.IsInBounds( tilePos ) ) 
-			{
-				GameManager.singleton.vectorMesh.AddGridForce(new Vector3(tile.transform.position.x, tile.transform.position.y, 5f), blockPlaceVectorgridForce,
+            if ( board.IsInBounds( tilePos ) ) {
+                GameManager.singleton.vectorMesh.AddGridForce(new Vector3(tile.transform.position.x, tile.transform.position.y, 5f),
+                        blockPlaceVectorgridForce,
                         blockPlaceVectorgridRadius, forceColor, true);
 
                 board[tilePos.x, tilePos.y] = tile.token;
@@ -134,15 +132,11 @@ public class TetrisBlock : MonoBehaviour
             { clearedRows.Add( y ); }
         }
 
-        if ( clearedRows.Count == 0 ) 
-		{
+        if ( clearedRows.Count == 0 ) {
             player.PlayOneShot( blockPlace );
-        } 
-		else 
-		{
+        } else {
             GameManager.singleton.ClearedRows( clearedRows.Count );
-            foreach (int row in clearedRows) 
-			{
+            foreach (int row in clearedRows) {
                 for (int x = 0; x < board.tiles.GetLength(0); x++) {
                     GameManager.singleton.vectorMesh.AddGridForce(new Vector3(x, row, 5f), rowClearVectorgridForce * clearedRows.Count,
                             rowClearVectorgridRadius * clearedRows.Count, rowClearVectorgridColor, true);
@@ -234,13 +228,10 @@ public class TetrisBlock : MonoBehaviour
         if ( active == false )
         { return; }
 
-        if ( Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow) ) 
-		{
-			MoveLeft();
-        } 
-		else if ( Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow) ) 
-		{
-			MoveRight();
+        if ( Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow) ) {
+            MoveLeft();
+        } else if ( Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow) ) {
+            MoveRight();
         }
 
         if ( Input.GetKeyDown(KeyCode.Q) ) {
@@ -260,7 +251,7 @@ public class TetrisBlock : MonoBehaviour
 
     void MoveLeft()
     {
-		if ( active == false || Time.timeScale <= 0.01f )
+        if ( active == false || Time.timeScale <= 0.01f )
         { return; }
 
         bool moveLeft = true;
@@ -270,16 +261,14 @@ public class TetrisBlock : MonoBehaviour
                 break;
             }
         }
-        if ( moveLeft ) 
-		{
-			GameManager.singleton.ResetTimer();
-			position += new Vector2Int(-1, 0);
+        if ( moveLeft ) {
+            position += new Vector2Int(-1, 0);
             player.PlayOneShot( blockMove );
         }
     }
     void MoveRight()
     {
-		if ( active == false || Time.timeScale <= 0.01f )
+        if ( active == false || Time.timeScale <= 0.01f )
         { return; }
 
         bool moveRight = true;
@@ -289,9 +278,7 @@ public class TetrisBlock : MonoBehaviour
                 break;
             }
         }
-        if ( moveRight ) 
-		{
-			GameManager.singleton.ResetTimer();
+        if ( moveRight ) {
             position += new Vector2Int(1, 0);
             player.PlayOneShot( blockMove );
         }
@@ -310,6 +297,7 @@ public class TetrisBlock : MonoBehaviour
         }
 
         if ( moveDown ) {
+            GameManager.singleton.ResetTimer();
             position += new Vector2Int(0, -1);
         } else {
             DetatchChildren();

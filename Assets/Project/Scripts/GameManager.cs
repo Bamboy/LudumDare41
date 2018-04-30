@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class GameManager : MonoBehaviour 
-{
+public class GameManager : MonoBehaviour {
     private static GameManager _instance;
     public static GameManager singleton { get { return _instance; } }
 
@@ -27,16 +26,16 @@ public class GameManager : MonoBehaviour
 
     public VectorGrid vectorMesh;
 
-	private bool _gameOver = false;
-	public bool isGameOver
-	{
-		get{ return _gameOver; }
-		set{ 
-			_gameOver = value;
-			GameOverUI.singleton.SetMenuState( MenuState.GameOver );
+    private bool _gameOver = false;
+    public bool isGameOver
+    {
+        get { return _gameOver; }
+        set {
+            _gameOver = value;
+            GameOverUI.singleton.SetMenuState( MenuState.GameOver );
 
-		}
-	}
+        }
+    }
 
     #region Score
     private int _score;
@@ -140,17 +139,9 @@ public class GameManager : MonoBehaviour
         board.DirtyAll();
 
         upcomingBlocks = new Queue<Block>();
-        upcomingBlocks.Enqueue(
-            Block.blocks[Random.Range(0, Block.blocks.Count)]
-        );
-        upcomingBlocks.Enqueue(
-            Block.blocks[Random.Range(0, Block.blocks.Count)]
-        );
-		upcomingBlocks.Enqueue(
-			Block.blocks[Random.Range(0, Block.blocks.Count)]
-		);
+        AddBlocks();
 
-		fallingBlock.Initalize( Block.blocks[Random.Range(0, Block.blocks.Count)] );
+        fallingBlock.Initalize( upcomingBlocks.Dequeue() );
 
         StartCoroutine( GameUpdater() );
     }
@@ -158,17 +149,14 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-		if( isGameOver == false )
-		{
-			if( Application.isFocused == false && GameOverUI.singleton.shownMenu == MenuState.None )
-			{
-				GameOverUI.singleton.SetMenuState( MenuState.Pause ); //Pause the game!
-			}
-			else if( Input.GetKeyDown(KeyCode.Escape) )
-			{
-				GameOverUI.singleton.SetMenuState( GameOverUI.singleton.shownMenu == MenuState.None ? MenuState.Pause : MenuState.None );
-			}
-		}
+        if ( isGameOver == false ) {
+            if ( Application.isFocused == false && GameOverUI.singleton.shownMenu == MenuState.None ) {
+                GameOverUI.singleton.SetMenuState( MenuState.Pause ); //Pause the game!
+            } else if ( Input.GetKeyDown(KeyCode.Escape) ) {
+                GameOverUI.singleton.SetMenuState( GameOverUI.singleton.shownMenu == MenuState.None ? MenuState.Pause :
+                                                   MenuState.None );
+            }
+        }
 
 
 
@@ -182,25 +170,36 @@ public class GameManager : MonoBehaviour
 
     }
 
+    void AddBlocks()
+    {
+        // implements the 7-bag piece queueing mechanism
+        List<Block> bag = new List<Block>();
+        for (int i = 0; i < Block.blocks.Count; i++) {
+            bag.Add(Block.blocks[i]);
+        }
+        while (bag.Count > 0) {
+            int n = Random.Range(0, bag.Count);
+            upcomingBlocks.Enqueue(bag[n]);
+            bag.RemoveAt(n);
+        }
+    }
+
     void GameUpdate()
     {
-		if( isGameOver )
-			return;
-		
-		if ( fallingBlock.active == false ) 
-		{
+        if ( isGameOver )
+        { return; }
+
+        if ( fallingBlock.active == false ) {
             fallingBlock.Initalize( upcomingBlocks.Dequeue() );
 
-            upcomingBlocks.Enqueue(
-                Block.blocks[Random.Range(0, Block.blocks.Count)]
-            );
+            if (upcomingBlocks.Count < Block.blocks.Count) {
+                AddBlocks();
+            }
 
-			UpcomingBlocks.singleton.UpdateUI();
-        } 
-		else
-        { 
-			fallingBlock.OnGameUpdate(); 
-		}
+            UpcomingBlocks.singleton.UpdateUI();
+        } else {
+            fallingBlock.OnGameUpdate();
+        }
     }
     public void ForceGameUpdate()
     {
@@ -212,10 +211,10 @@ public class GameManager : MonoBehaviour
         board.ResolveDirty();
     }
 
-	public void ResetTimer()
-	{
-		_timeTillUpdate = gameUpdateSpeed;
-	}
+    public void ResetTimer()
+    {
+        _timeTillUpdate = gameUpdateSpeed;
+    }
 
     private float _timeTillUpdate;
     IEnumerator GameUpdater()
