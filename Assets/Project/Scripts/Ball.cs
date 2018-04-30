@@ -29,10 +29,11 @@ public class Ball : MonoBehaviour {
 
     public float targetSpeed = 2f;
     public float accelToTargetSpeed = 0.01f;
-    public float maxSpeed = 3f;
 
     public float upperSpeed = 25f;
     public float deccelToUpperSpeed = 1f;
+
+    public float maxSpeed = 30f;
 
     public Color addColor = new Color(1, 0, 0.3f, 1);
     public Color removeColor = new Color(0, 1, 1, 1);
@@ -197,12 +198,13 @@ public class Ball : MonoBehaviour {
         else if ( rbody.velocity.x > upperSpeed )
         { additionalForce.y = -Mathf.Sign(rbody.velocity.y) * deccelToUpperSpeed; }
 
-        if ( additionalForce != Vector2.zero )
-        { rbody.AddForce( additionalForce ); }
+
+        rbody.AddForce( additionalForce );
 
         if (rbody.velocity.magnitude > maxSpeed) {
             rbody.velocity = rbody.velocity.normalized * maxSpeed;
         }
+
 
     }
 
